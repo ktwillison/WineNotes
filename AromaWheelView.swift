@@ -10,14 +10,14 @@ import UIKit
 
 @IBDesignable
 class AromaWheelView: UIView {
-
-    let aromas = ["Fruity", "Chemical", "Earthy", "Floral"]
-    var numberOfAromas : Int {
+    
+    private let aromas : [Aroma] = [Aroma("Fruity"), Aroma("Chemical"), Aroma("Earthy"), Aroma("Floral")]
+    private var numberOfAromas : Int {
         get {return aromas.count}
     }
     
-    let aromaLabelHeight : CGFloat = 20
-    var aromaLabelWidth : CGFloat {
+    private let aromaLabelHeight : CGFloat = 20
+    private var aromaLabelWidth : CGFloat {
         return 0.9 * wheelRadius
     }
     
@@ -34,6 +34,16 @@ class AromaWheelView: UIView {
     private var scale : CGFloat = 1.0
     private var lineWidth : CGFloat = 2.0
     
+    func getWedge(point: CGPoint) -> Aroma? {
+        for aroma in aromas {
+            if let hit = aroma.path?.containsPoint(point) where hit {
+                print(aroma.aromaDescription)
+//                return aroma
+            }
+        }
+        print("---")
+        return nil
+    }
     
     // Create a wedge of the wheel
     private func wedgeInCircleCenteredAtPoint(midPoint: CGPoint, withRadius radius: CGFloat, numberOfSections: Int, thisSectionNumber: Int) -> UIBezierPath {
@@ -44,7 +54,8 @@ class AromaWheelView: UIView {
         let endAngle = startAngle + arcLength
         
         // Create and return wedge path
-        let path = UIBezierPath(arcCenter: midPoint, radius: radius, startAngle: startAngle, endAngle: endAngle, clockwise: false)
+        let path = UIBezierPath()
+        path.addArcWithCenter(midPoint, radius: radius, startAngle: startAngle, endAngle: endAngle, clockwise: true)
         path.addLineToPoint(midPoint)
         path.closePath()
         path.lineWidth = lineWidth
@@ -75,10 +86,11 @@ class AromaWheelView: UIView {
     
     override func drawRect(rect: CGRect){
         UIColor.blueColor().set()
-        for aroma in aromas {
-            wedgeInCircleCenteredAtPoint(wheelCenter, withRadius: wheelRadius, numberOfSections: numberOfAromas, thisSectionNumber: aromas.indexOf(aroma)!+1).stroke()
-            addLabelToWedge(wheelCenter, withRadius: wheelRadius, numberOfSections: numberOfAromas, thisSectionNumber: aromas.indexOf(aroma)!+1, labelText : aroma)
+        for (index, aroma) in aromas.enumerate() {
+            aroma.path = wedgeInCircleCenteredAtPoint(wheelCenter, withRadius:wheelRadius, numberOfSections: numberOfAromas, thisSectionNumber: index+1)
+            aroma.path?.stroke()
+            addLabelToWedge(wheelCenter, withRadius: wheelRadius, numberOfSections: numberOfAromas, thisSectionNumber: index+1, labelText : aroma.aromaDescription)
+            aroma.color = UIColor.blueColor()
         }
     }
-
 }

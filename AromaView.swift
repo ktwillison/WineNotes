@@ -64,9 +64,14 @@ class AromaView: UIView, UIDynamicAnimatorDelegate {
             let currentRotationSpeed = wheelBehavior.angularVelocityForItem(aromaWheelView)
             if currentRotationSpeed != 0 {
                 wheelBehavior.addAngularVelocity(-currentRotationSpeed, forItem: aromaWheelView)
-//            } else if let section = hitTest(recognizer.locationInView(self)) where section.superview == aromaWheelView {
-//                    print(section)
+//            } else if let section = aromaWheelView.hitTest(recognizer.locationInView(aromaWheelView), withEvent: nil) {
+            } else if let aroma = aromaWheelView.getWedge(recognizer.locationInView(aromaWheelView)) {
+                    print(aroma.aromaDescription)
                 
+//                if section.superview == aromaWheelView {
+//                    print(section)
+//                    print("hit!")
+//                }
             }
         }
     }
