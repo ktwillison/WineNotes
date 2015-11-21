@@ -23,7 +23,8 @@ class AromaWheelView: UIView {
     
     @IBInspectable
     var wheelRadius : CGFloat {
-        return 0.9 * min(bounds.size.width, bounds.size.height) / 2 * scale
+        return 0.99 * bounds.size.height / 2 * scale
+//        return min(bounds.size.width, bounds.size.height) / 2 * scale
     }
     
     @IBInspectable

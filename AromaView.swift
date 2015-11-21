@@ -12,12 +12,22 @@ class AromaView: UIView, UIDynamicAnimatorDelegate {
 
     private lazy var aromaWheelView : AromaWheelView = {
         let view = AromaWheelView()
-        view.frame = self.bounds
-        view.center = self.center
+        view.frame = CGRect(origin: CGPointZero, size: CGSize(width: self.wheelWidth, height: self.wheelWidth))
+        view.center = self.wheelCenter
         view.opaque = false
         self.addSubview(view)
         return view
     }()
+    
+    private var wheelCenter : CGPoint {
+        return CGPoint(x: -self.bounds.width/10, y: self.bounds.height / 2)
+    }
+    
+    private var wheelWidth : CGFloat {
+        return self.bounds.height
+    }
+    
+    
     
     private lazy var animator: UIDynamicAnimator = {
         let lazilyCreatedAnimator = UIDynamicAnimator(referenceView: self)
@@ -64,21 +74,11 @@ class AromaView: UIView, UIDynamicAnimatorDelegate {
             let currentRotationSpeed = wheelBehavior.angularVelocityForItem(aromaWheelView)
             if currentRotationSpeed != 0 {
                 wheelBehavior.addAngularVelocity(-currentRotationSpeed, forItem: aromaWheelView)
-//            } else if let section = aromaWheelView.hitTest(recognizer.locationInView(aromaWheelView), withEvent: nil) {
             } else if let aroma = aromaWheelView.getWedge(recognizer.locationInView(aromaWheelView)) {
                     print(aroma.aromaDescription)
-                
-//                if section.superview == aromaWheelView {
-//                    print(section)
-//                    print("hit!")
-//                }
             }
         }
     }
-    
-//    private var wheelSize : CGFloat {
-//        return self.frame.width
-//    }
     
     func positionWheel() {
         
@@ -89,7 +89,7 @@ class AromaView: UIView, UIDynamicAnimatorDelegate {
         aromaWheelView.transform = CGAffineTransformMakeRotation(0)
         
         // Re-center wheel and add roration back
-        aromaWheelView.center = self.center
+        aromaWheelView.center = wheelCenter
         aromaWheelView.transform = rotation
         wheelBehavior.addItem(aromaWheelView)
         wheelBehavior.addAngularVelocity(currentRotationSpeed, forItem: aromaWheelView)
