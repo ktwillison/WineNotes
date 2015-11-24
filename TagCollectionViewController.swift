@@ -38,6 +38,17 @@ class TagCollectionViewController: UICollectionViewController {
                 }
             }
         }
+        
+        center.addObserverForName("RemoveAroma",
+            object: nil, //UIApplication.sharedApplication(),
+            queue: NSOperationQueue.mainQueue())
+            { notification in
+            if let aroma = notification.userInfo?["removedAroma"] as? Aroma {
+                if let i = self.tags.indexOf(aroma) {
+                    self.tags.removeAtIndex(i)
+                }
+            }
+        }
     }
 
     override func didReceiveMemoryWarning() {
@@ -68,7 +79,7 @@ class TagCollectionViewController: UICollectionViewController {
 
     override func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
         if let cell = collectionView.dequeueReusableCellWithReuseIdentifier(reuseIdentifier, forIndexPath: indexPath) as? TagCollectionViewCell {
-            cell.label?.text = tags[indexPath.row].aromaDescription ?? ""
+            cell.aroma = tags[indexPath.row]
             return cell
         }
         return UICollectionViewCell()
