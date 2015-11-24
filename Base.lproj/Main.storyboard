@@ -3,6 +3,7 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9049"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
         <!--Aroma View Controller-->
@@ -16,8 +17,25 @@
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC" customClass="AromaView" customModule="WineNotes" customModuleProvider="target">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ktZ-dR-Uap">
+                                <rect key="frame" x="0.0" y="438" width="600" height="162"/>
+                                <animations/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="162" id="g2k-vx-6C3"/>
+                                </constraints>
+                                <connections>
+                                    <segue destination="pZM-Ue-P0V" kind="embed" id="dlZ-xh-dsJ"/>
+                                </connections>
+                            </containerView>
+                        </subviews>
                         <animations/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstAttribute="trailing" secondItem="ktZ-dR-Uap" secondAttribute="trailing" id="XFb-N0-90d"/>
+                            <constraint firstItem="ktZ-dR-Uap" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="iE9-mb-l9J"/>
+                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="ktZ-dR-Uap" secondAttribute="bottom" id="qfD-o1-jB9"/>
+                        </constraints>
                     </view>
                     <connections>
                         <outlet property="aromaView" destination="8bC-Xf-vdC" id="crP-t5-7I7"/>
@@ -26,6 +44,83 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="278" y="277"/>
+        </scene>
+        <!--Tag Collection View Controller-->
+        <scene sceneID="4zy-Kc-Fac">
+            <objects>
+                <collectionViewController id="pZM-Ue-P0V" customClass="TagCollectionViewController" customModule="WineNotes" customModuleProvider="target" sceneMemberID="viewController">
+                    <collectionView key="view" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" id="svd-W9-0Kf">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="162"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <animations/>
+                        <color key="backgroundColor" red="0.22352941179999999" green="0.61176470589999998" blue="0.58431372550000005" alpha="1" colorSpace="calibratedRGB"/>
+                        <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="igs-f5-5kp">
+                            <size key="itemSize" width="162" height="36"/>
+                            <size key="headerReferenceSize" width="0.0" height="0.0"/>
+                            <size key="footerReferenceSize" width="0.0" height="0.0"/>
+                            <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
+                        </collectionViewFlowLayout>
+                        <cells>
+                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" horizontalCompressionResistancePriority="1" reuseIdentifier="Tag" id="5Zg-Bx-6dj" customClass="TagCollectionViewCell" customModule="WineNotes" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="0.0" width="162" height="36"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                                    <rect key="frame" x="0.0" y="0.0" width="162" height="36"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <stackView opaque="NO" contentMode="scaleToFill" distribution="fillProportionally" translatesAutoresizingMaskIntoConstraints="NO" id="kMF-Vx-Tov">
+                                            <rect key="frame" x="2" y="2" width="158" height="32"/>
+                                            <subviews>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="W8q-M2-Jes">
+                                                    <rect key="frame" x="0.0" y="0.0" width="128" height="32"/>
+                                                    <animations/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="20" id="Pla-ND-7AK"/>
+                                                    </constraints>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ydC-KB-kEX">
+                                                    <rect key="frame" x="128" y="0.0" width="30" height="32"/>
+                                                    <animations/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" constant="30" id="MA4-SE-AI1"/>
+                                                    </constraints>
+                                                    <state key="normal" title="x"/>
+                                                    <connections>
+                                                        <action selector="removeTag:" destination="5Zg-Bx-6dj" eventType="touchUpInside" id="yK7-ld-OEz"/>
+                                                    </connections>
+                                                </button>
+                                            </subviews>
+                                            <animations/>
+                                        </stackView>
+                                    </subviews>
+                                    <animations/>
+                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                </view>
+                                <animations/>
+                                <constraints>
+                                    <constraint firstAttribute="trailingMargin" secondItem="kMF-Vx-Tov" secondAttribute="trailing" id="KqH-sJ-Sqx"/>
+                                    <constraint firstItem="kMF-Vx-Tov" firstAttribute="leading" secondItem="5Zg-Bx-6dj" secondAttribute="leadingMargin" id="gkd-PJ-mud"/>
+                                    <constraint firstAttribute="bottomMargin" secondItem="kMF-Vx-Tov" secondAttribute="bottom" id="pvf-82-lg1"/>
+                                    <constraint firstItem="kMF-Vx-Tov" firstAttribute="top" secondItem="5Zg-Bx-6dj" secondAttribute="topMargin" id="rIB-nt-fMa"/>
+                                </constraints>
+                                <edgeInsets key="layoutMargins" top="2" left="2" bottom="2" right="2"/>
+                                <connections>
+                                    <outlet property="label" destination="W8q-M2-Jes" id="cii-HT-SXj"/>
+                                </connections>
+                            </collectionViewCell>
+                        </cells>
+                        <connections>
+                            <outlet property="dataSource" destination="pZM-Ue-P0V" id="i4f-2H-yeb"/>
+                            <outlet property="delegate" destination="pZM-Ue-P0V" id="wr4-Ge-dWK"/>
+                        </connections>
+                    </collectionView>
+                </collectionViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="C28-s4-IHt" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="278" y="834"/>
         </scene>
     </scenes>
 </document>

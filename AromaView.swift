@@ -75,7 +75,17 @@ class AromaView: UIView, UIDynamicAnimatorDelegate {
             if currentRotationSpeed != 0 {
                 wheelBehavior.addAngularVelocity(-currentRotationSpeed, forItem: aromaWheelView)
             } else if let aroma = aromaWheelView.getWedge(recognizer.locationInView(aromaWheelView)) {
-                    print(aroma.aromaDescription)
+                
+                print(aroma.aromaDescription)
+                
+                // Notify 'AddAroma' with the current aroma
+                let notification = NSNotification(
+                    name: "AddAroma",
+                    object: self,
+                    userInfo: ["addedAroma" : aroma]
+                    )
+                
+                NSNotificationCenter.defaultCenter().postNotification(notification)
             }
         }
     }

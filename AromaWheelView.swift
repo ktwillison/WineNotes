@@ -38,11 +38,9 @@ class AromaWheelView: UIView {
     func getWedge(point: CGPoint) -> Aroma? {
         for aroma in aromas {
             if let hit = aroma.path?.containsPoint(point) where hit {
-                print(aroma.aromaDescription)
-//                return aroma
+                return aroma
             }
         }
-        print("---")
         return nil
     }
     
