@@ -15,5 +15,10 @@ class Aroma: NSObject {
     
     var aromaDescription : String
     var path : UIBezierPath?
-    var color : UIColor? 
+    var color : UIColor?
+    
+}
+
+func ==(lhs: Aroma, rhs: Aroma) -> Bool {
+    return (lhs.aromaDescription == rhs.aromaDescription) && (lhs.color == rhs.color)
 }

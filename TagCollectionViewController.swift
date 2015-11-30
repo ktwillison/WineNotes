@@ -12,6 +12,7 @@ private let reuseIdentifier = "Tag"
 
 class TagCollectionViewController: UICollectionViewController {
 
+    var aromaType : AromaType?
     var tags : [Aroma] = [] {
         didSet {
             print(tags.description)
@@ -31,10 +32,12 @@ class TagCollectionViewController: UICollectionViewController {
         center.addObserverForName("AddAroma",
             object: nil, //UIApplication.sharedApplication(),
             queue: NSOperationQueue.mainQueue())
-            { notification in
+            { [weak weakSelf = self] notification in
             if let aroma = notification.userInfo?["addedAroma"] as? Aroma {
-                if !self.tags.contains(aroma) {
-                    self.tags.append(aroma)
+                if let hasAroma = weakSelf?.tags.contains(aroma) where !hasAroma {
+//                if find(self.tags, aroma) == nil {
+
+                    weakSelf?.tags.append(aroma)
                 }
             }
         }
@@ -42,10 +45,10 @@ class TagCollectionViewController: UICollectionViewController {
         center.addObserverForName("RemoveAroma",
             object: nil, //UIApplication.sharedApplication(),
             queue: NSOperationQueue.mainQueue())
-            { notification in
+            { [weak weakSelf = self] notification in
             if let aroma = notification.userInfo?["removedAroma"] as? Aroma {
-                if let i = self.tags.indexOf(aroma) {
-                    self.tags.removeAtIndex(i)
+                if let i = weakSelf?.tags.indexOf(aroma) {
+                    weakSelf?.tags.removeAtIndex(i)
                 }
             }
         }
@@ -84,29 +87,18 @@ class TagCollectionViewController: UICollectionViewController {
         }
         return UICollectionViewCell()
     }
+    
+//    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
+//        let cell = TagCollectionViewCell()
+//        cell.aroma = tags[indexPath.row]
+////        cell.label.sizeToFit()
+//        cell.systemLayoutSizeFittingSize(CGSize(width: 50, height: 30))
+//        return cell.frame.size
+//    }
 
     // MARK: UICollectionViewDelegate
 
     /*
-    // Uncomment this method to specify if the specified item should be highlighted during tracking
-    override func collectionView(collectionView: UICollectionView, shouldHighlightItemAtIndexPath indexPath: NSIndexPath) -> Bool {
-        return true
-    }
-    */
-
-    /*
-    // Uncomment this method to specify if the specified item should be selected
-    override func collectionView(collectionView: UICollectionView, shouldSelectItemAtIndexPath indexPath: NSIndexPath) -> Bool {
-        return true
-    }
-    */
-
-    /*
-    // Uncomment these methods to specify if an action menu should be displayed for the specified item, and react to actions performed on the item
-    override func collectionView(collectionView: UICollectionView, shouldShowMenuForItemAtIndexPath indexPath: NSIndexPath) -> Bool {
-        return false
-    }
-
     override func collectionView(collectionView: UICollectionView, canPerformAction action: Selector, forItemAtIndexPath indexPath: NSIndexPath, withSender sender: AnyObject?) -> Bool {
         return false
     }

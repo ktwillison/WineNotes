@@ -16,6 +16,7 @@ class AromaView: UIView, UIDynamicAnimatorDelegate {
         view.center = self.wheelCenter
         view.opaque = false
         self.addSubview(view)
+        self.sendSubviewToBack(view)
         return view
     }()
     

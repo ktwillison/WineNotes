@@ -11,6 +11,8 @@ import UIKit
 class AromaViewController: UIViewController {
 
     @IBOutlet var aromaView: AromaView!
+    var aromaType : AromaType?
+    var initializeWithTags : [Aroma] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -18,8 +20,16 @@ class AromaViewController: UIViewController {
         aromaView.addGestureRecognizer(panWheel)
         let tapWheel = UITapGestureRecognizer(target: aromaView, action: "tapWheel:")
         aromaView.addGestureRecognizer(tapWheel)
-
         aromaView.animating = true
+        
+        if let tagView = childViewControllers[0] as? TagCollectionViewController {
+            tagView.tags = initializeWithTags
+            tagView.aromaType = aromaType
+        }
+        
+        
+        
+//        aromaView.sendSubviewToBack(aromaView.)
         
 //        aromaView.backgroundColor = UIColor.redColor()
 //        aromaView.aromaWheelView.backgroundColor = UIColor.redColor()
@@ -30,14 +40,20 @@ class AromaViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
 
-    /*
     // MARK: - Navigation
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
+        if segue.identifier == "Unwind to Review Table",
+            let unwindToTable = segue.destinationViewController as? ReviewTableViewController {
+            if let tagVC = childViewControllers[0] as? TagCollectionViewController {
+                if tagVC.aromaType == AromaType.Mouth {
+                    unwindToTable.review.mouth.aromas = tagVC.tags
+                } else if tagVC.aromaType == AromaType.Nose {
+                    unwindToTable.review.nose.aromas = tagVC.tags
+                }
+            }
+        }
     }
-    */
 
 }
