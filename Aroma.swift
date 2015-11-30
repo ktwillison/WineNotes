@@ -17,8 +17,23 @@ class Aroma: NSObject {
     var path : UIBezierPath?
     var color : UIColor?
     
+    
+    // Added this method to avoid adding duplicate tags when the Aroma objects themselves
+    // had changed, throwing the comparison operator off. 
+    // tips from https://www.reddit.com/r/swift/comments/3q401o/how_to_find_custom_object_in_array_using_contains/
+    override func isEqual(object: AnyObject?) -> Bool {
+        if let otherAroma = object as? Aroma {
+            return (otherAroma.aromaDescription == aromaDescription) && (otherAroma.color == color)
+        }
+        return false
+    }
+    
 }
 
-func ==(lhs: Aroma, rhs: Aroma) -> Bool {
-    return (lhs.aromaDescription == rhs.aromaDescription) && (lhs.color == rhs.color)
+func == (left: Aroma, right: Aroma) -> Bool {
+    return (left.aromaDescription == right.aromaDescription) && (left.color == right.color)
+}
+
+func != (left: Aroma, right: Aroma) -> Bool {
+    return (left.aromaDescription != right.aromaDescription) || (left.color != right.color)
 }
