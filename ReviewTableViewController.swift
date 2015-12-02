@@ -49,7 +49,7 @@ class ReviewTableViewController: UITableViewController {
         
         // General
         "Rating" : RatingCell(cellTitle: "Rating", cellType: CellType.slider, sliderStyle: .Numeric),
-        "Varietal" : RatingCell(cellTitle: "Varietal", cellType: CellType.selection),
+        "Varietal" : RatingCell(cellTitle: "Varietal", cellType: CellType.selection, pickerValues: AppData.varietals),
         "Country" : RatingCell(cellTitle: "Country", cellType: CellType.selection),
         "Region" : RatingCell(cellTitle: "Region", cellType: CellType.selection)
     ]
@@ -109,11 +109,12 @@ class ReviewTableViewController: UITableViewController {
             cell.connectedCell = cellInfo
             cell.addGestureRecognizer(UITapGestureRecognizer(target: cell, action: "moveSliderToPoint:"))
         } else if let cell = cell as? PickerTableViewCell {
+            cell.connectedCell = cellInfo
             cell.titleLabel?.text = cellInfo.title
             cell.picker.hidden = (indexPath != selectedIndexPath)
         } else if let cell = cell as? AromaTableViewCell {
             cell.titleLabel?.text = cellInfo.title
-            if headings[indexPath.section] == "Mouth"{
+            if headings[indexPath.section] == "Mouth" {
                 cell.aromaType = AromaType.Mouth
             } else {
                 cell.aromaType = AromaType.Nose
@@ -153,12 +154,13 @@ class ReviewTableViewController: UITableViewController {
     }
 
     
-    override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-        if indexPath == selectedIndexPath && cellList[indexPath.section][indexPath.row].identifier == CellType.selection {
-            return 300
-        }
-        return self.tableView.rowHeight
-    }
+//    override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+//        if indexPath == selectedIndexPath && cellList[indexPath.section][indexPath.row].identifier == CellType.selection {
+//            return 300
+//        }
+//        return self.tableView.rowHeight
+//    }
+    
     /*
     // Override to support conditional editing of the table view.
     override func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
@@ -230,13 +232,20 @@ class ReviewTableViewController: UITableViewController {
 }
 
 class RatingCell {
-    init(cellTitle : String, cellType : String, sliderStyle style : SliderStyle = SliderStyle.None) {
+    init(cellTitle : String, cellType : String, sliderStyle style : SliderStyle = SliderStyle.None, pickerValues pickerVals : [String] = []) {
         title = cellTitle
         identifier = cellType
         sliderStyle = style
+        pickerValues = pickerVals
     }
+    
     let identifier : String!
     let title : String!
     var sliderStyle : SliderStyle!
+    var pickerValues : [String]!
     var value : Double?
+}
+
+struct AppData {
+    static let varietals = ["a", "b"]
 }
