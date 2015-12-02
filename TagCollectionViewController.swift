@@ -23,13 +23,16 @@ class TagCollectionViewController: UICollectionViewController {
     
     let center = NSNotificationCenter.defaultCenter()
     
+    private var addObserver : AnyObject?
+    private var removeObserver : AnyObject?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
 
-        center.addObserverForName("AddAroma",
+        addObserver = center.addObserverForName("AddAroma",
             object: nil, //UIApplication.sharedApplication(),
             queue: NSOperationQueue.mainQueue())
             { [weak weakSelf = self] notification in
@@ -42,7 +45,7 @@ class TagCollectionViewController: UICollectionViewController {
             }
         }
         
-        center.addObserverForName("RemoveAroma",
+        removeObserver = center.addObserverForName("RemoveAroma",
             object: nil, //UIApplication.sharedApplication(),
             queue: NSOperationQueue.mainQueue())
             { [weak weakSelf = self] notification in
@@ -53,10 +56,17 @@ class TagCollectionViewController: UICollectionViewController {
             }
         }
     }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+    
+    override func viewWillDisappear(animated: Bool) {
+        super.viewWillDisappear(animated)
+        if addObserver != nil {
+            NSNotificationCenter.defaultCenter().removeObserver(addObserver!)
+            addObserver = nil
+        }
+        if removeObserver != nil {
+            NSNotificationCenter.defaultCenter().removeObserver(removeObserver!)
+            removeObserver = nil
+        }
     }
 
     /*

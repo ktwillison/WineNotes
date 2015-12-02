@@ -18,6 +18,8 @@ enum SliderStyle {
 
 class SliderTableViewCell: UITableViewCell {
     
+    var delegate : InfoTextPresentationDelegate!
+    
     var connectedCell : RatingCell? {
         didSet {
             
@@ -38,7 +40,7 @@ class SliderTableViewCell: UITableViewCell {
             changeValue(slider)
         }
     }
-    
+
     var stopPoints : [String]?
     
     @IBAction func changeValue(sender: UISlider) {
@@ -59,6 +61,8 @@ class SliderTableViewCell: UITableViewCell {
     @IBOutlet weak var valueLabel: UILabel!
     
     @IBOutlet weak var slider: UISlider!
+    
+    @IBOutlet weak var showInfoText: UIButton!
         
     func moveSliderToPoint(recognizer: UITapGestureRecognizer) {
         let tappedAtPoint = recognizer.locationInView(slider)

@@ -49,15 +49,32 @@
                                         <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="1Ee-Fq-3ff">
                                             <rect key="frame" x="8" y="8" width="584" height="104"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ivk-ye-5Hw">
-                                                    <rect key="frame" x="0.0" y="0.0" width="584" height="23"/>
+                                                <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="sBa-pJ-4P7">
+                                                    <rect key="frame" x="0.0" y="0.0" width="584" height="30"/>
+                                                    <subviews>
+                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ivk-ye-5Hw">
+                                                            <rect key="frame" x="0.0" y="0.0" width="544" height="30"/>
+                                                            <animations/>
+                                                            <fontDescription key="fontDescription" style="UICTFontTextStyleTitle3"/>
+                                                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                            <nil key="highlightedColor"/>
+                                                        </label>
+                                                        <button opaque="NO" contentMode="scaleToFill" horizontalCompressionResistancePriority="250" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="YRz-9V-qbx">
+                                                            <rect key="frame" x="544" y="0.0" width="40" height="30"/>
+                                                            <animations/>
+                                                            <color key="backgroundColor" red="0.57254901960000004" green="0.80392156859999997" blue="0.53333333329999999" alpha="1" colorSpace="calibratedRGB"/>
+                                                            <constraints>
+                                                                <constraint firstAttribute="width" constant="40" id="Ucy-d3-ehr"/>
+                                                            </constraints>
+                                                            <state key="normal" title="?">
+                                                                <color key="titleColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                                            </state>
+                                                        </button>
+                                                    </subviews>
                                                     <animations/>
-                                                    <fontDescription key="fontDescription" style="UICTFontTextStyleTitle3"/>
-                                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
+                                                </stackView>
                                                 <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="0cm-Sq-4RT">
-                                                    <rect key="frame" x="-2" y="23" width="588" height="63"/>
+                                                    <rect key="frame" x="-2" y="30" width="588" height="56"/>
                                                     <animations/>
                                                     <connections>
                                                         <action selector="changeValue:" destination="sbN-R7-1uS" eventType="touchUpInside" id="LVa-fa-Jhg"/>
@@ -84,6 +101,7 @@
                                 </tableViewCellContentView>
                                 <animations/>
                                 <connections>
+                                    <outlet property="showInfoText" destination="YRz-9V-qbx" id="Xrx-ph-Q9j"/>
                                     <outlet property="slider" destination="0cm-Sq-4RT" id="hA8-vT-fT4"/>
                                     <outlet property="titleLabel" destination="ivk-ye-5Hw" id="Xcs-ou-UV0"/>
                                     <outlet property="valueLabel" destination="svl-3N-DF1" id="Whj-xd-INC"/>
@@ -93,7 +111,7 @@
                                 <rect key="frame" x="0.0" y="187" width="600" height="269"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="9Be-s8-1by" id="eOF-Pj-nhx">
-                                    <rect key="frame" x="0.0" y="0.0" width="600" height="268.5"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="600" height="269"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="ddN-OI-WcZ">
@@ -109,7 +127,7 @@
                                                             <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                             <nil key="highlightedColor"/>
                                                         </label>
-                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="749" text=" " textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ftw-ny-5Sv">
+                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="749" text="" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ftw-ny-5Sv">
                                                             <rect key="frame" x="292" y="0.0" width="292" height="23"/>
                                                             <animations/>
                                                             <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
@@ -196,6 +214,49 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Udv-8R-QqG" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="333" y="277"/>
+        </scene>
+        <!--Info Text View Controller-->
+        <scene sceneID="YOC-ra-QwS">
+            <objects>
+                <viewController id="OwD-M6-kSM" customClass="InfoTextViewController" customModule="WineNotes" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="2mL-9N-kqL"/>
+                        <viewControllerLayoutGuide type="bottom" id="b8U-JX-muc"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="sMp-w4-3bt">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="2iS-eu-1Jd">
+                                <rect key="frame" x="20" y="28" width="560" height="21"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="t04-qn-H7e">
+                                        <rect key="frame" x="0.0" y="0.0" width="560" height="21"/>
+                                        <animations/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                                <animations/>
+                            </stackView>
+                        </subviews>
+                        <animations/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstAttribute="trailingMargin" secondItem="2iS-eu-1Jd" secondAttribute="trailing" id="1Xf-ak-p71"/>
+                            <constraint firstItem="b8U-JX-muc" firstAttribute="top" relation="greaterThanOrEqual" secondItem="2iS-eu-1Jd" secondAttribute="bottom" constant="8" symbolic="YES" id="aWc-49-Vns"/>
+                            <constraint firstItem="2iS-eu-1Jd" firstAttribute="leading" secondItem="sMp-w4-3bt" secondAttribute="leadingMargin" id="hJ0-bl-7Pz"/>
+                            <constraint firstItem="2iS-eu-1Jd" firstAttribute="top" secondItem="2mL-9N-kqL" secondAttribute="bottom" constant="8" symbolic="YES" id="ylV-wB-4To"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="infoText" destination="t04-qn-H7e" id="i9v-LY-QYj"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="OQn-dt-bPo" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="333" y="1011"/>
         </scene>
         <!--Aroma View Controller-->
         <scene sceneID="tne-QT-ifu">
@@ -330,7 +391,7 @@
                 </collectionViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="C28-s4-IHt" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="278" y="834"/>
+            <point key="canvasLocation" x="1090" y="786"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="FsC-X4-HWw">

@@ -34,11 +34,6 @@ class AromaViewController: UIViewController {
 //        aromaView.backgroundColor = UIColor.redColor()
 //        aromaView.aromaWheelView.backgroundColor = UIColor.redColor()
     }
-    
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
 
     // MARK: - Navigation
 
