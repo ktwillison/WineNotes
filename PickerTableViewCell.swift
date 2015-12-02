@@ -14,6 +14,8 @@ class PickerTableViewCell: UITableViewCell {
     
     var connectedCell : RatingCell?
     
+    @IBOutlet weak var picker: UIPickerView!
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code

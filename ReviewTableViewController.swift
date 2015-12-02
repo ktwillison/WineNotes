@@ -11,6 +11,7 @@ import UIKit
 class ReviewTableViewController: UITableViewController {
     
     let review = Review()
+    var selectedIndexPath : NSIndexPath?
     
     // Keep track of reuse identifiers for each cell type
     private struct CellType {
@@ -109,6 +110,7 @@ class ReviewTableViewController: UITableViewController {
             cell.addGestureRecognizer(UITapGestureRecognizer(target: cell, action: "moveSliderToPoint:"))
         } else if let cell = cell as? PickerTableViewCell {
             cell.titleLabel?.text = cellInfo.title
+            cell.picker.hidden = (indexPath != selectedIndexPath)
         } else if let cell = cell as? AromaTableViewCell {
             cell.titleLabel?.text = cellInfo.title
             if headings[indexPath.section] == "Mouth"{
@@ -128,7 +130,35 @@ class ReviewTableViewController: UITableViewController {
     override func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         return headings[section]
     }
+    
+    
+    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        
+        let previouslySelectedIndexPath = selectedIndexPath
+        selectedIndexPath = indexPath
+        
+        var reloadIndexPaths : [NSIndexPath] = [indexPath]
+        
+        // If we select the selected index again, collapse it, otherwise expand it
+        if indexPath == previouslySelectedIndexPath {
+            selectedIndexPath = nil
+            
+        } else if previouslySelectedIndexPath != nil {
+            reloadIndexPaths.append(previouslySelectedIndexPath!)
+        }
+        
+        // Function call prompted by the following tutorial:
+        // https://www.youtube.com/watch?v=VWgr_wNtGPM
+        tableView.reloadRowsAtIndexPaths(reloadIndexPaths, withRowAnimation: .Automatic)
+    }
 
+    
+    override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+        if indexPath == selectedIndexPath && cellList[indexPath.section][indexPath.row].identifier == CellType.selection {
+            return 300
+        }
+        return self.tableView.rowHeight
+    }
     /*
     // Override to support conditional editing of the table view.
     override func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {

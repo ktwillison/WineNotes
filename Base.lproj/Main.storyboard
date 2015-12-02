@@ -134,6 +134,7 @@
                                 </tableViewCellContentView>
                                 <animations/>
                                 <connections>
+                                    <outlet property="picker" destination="eQj-fU-1OJ" id="a3L-eH-G1s"/>
                                     <outlet property="titleLabel" destination="hyQ-3l-Zmu" id="AdT-eW-wtN"/>
                                 </connections>
                             </tableViewCell>
