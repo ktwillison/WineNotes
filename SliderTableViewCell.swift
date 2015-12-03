@@ -62,8 +62,15 @@ class SliderTableViewCell: UITableViewCell {
     
     @IBOutlet weak var slider: UISlider!
     
-    @IBOutlet weak var showInfoText: UIButton!
-        
+    @IBOutlet weak var showInfoTextButton: UIButton!
+    
+    // Method adapted from  http://stackoverflow.com/questions/26880526/performing-a-segue-from-a-button-within-a-custom-uitableviewcell
+    @IBAction func showInfoText(sender: UIButton) {
+        if delegate != nil {
+            delegate.callSegueFromCell(sender)
+        }
+    }
+    
     func moveSliderToPoint(recognizer: UITapGestureRecognizer) {
         let tappedAtPoint = recognizer.locationInView(slider)
         let tappedAtPercent = Float(tappedAtPoint.x / slider.frame.width)
@@ -83,4 +90,8 @@ class SliderTableViewCell: UITableViewCell {
 //        // Configure the view for the selected state
 //    }
 
+}
+
+protocol InfoTextPresentationDelegate {
+    func callSegueFromCell(sender: UIButton)
 }

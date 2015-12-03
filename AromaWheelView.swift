@@ -11,7 +11,29 @@ import UIKit
 @IBDesignable
 class AromaWheelView: UIView {
     
-    private let aromas : [Aroma] = [Aroma("Fruity"), Aroma("Chemical"), Aroma("Earthy"), Aroma("Floral")]
+    private let colorLevels = [UIColor(red:0.412, green:0.063, blue:0.176, alpha:1.00),
+        UIColor(red:0.506, green:0.090, blue:0.216, alpha:1.00),
+        UIColor(red:0.729, green:0.149, blue:0.314, alpha:1.00)]
+    
+    private lazy var aromas : [Aroma] = [
+        Aroma("Fruity", wedgeColor: self.colorLevels[0]),	Aroma("Citrus", wedgeColor: self.colorLevels[1]),
+        Aroma("Berry", wedgeColor: self.colorLevels[1]),
+        Aroma("Tree fruit", wedgeColor: self.colorLevels[1]),
+        Aroma("Tropical fruit", wedgeColor: self.colorLevels[1]),
+        Aroma("Dried fruit", wedgeColor: self.colorLevels[1]),
+        Aroma("Vegetative", wedgeColor: self.colorLevels[0]),	Aroma("Fresh", wedgeColor: self.colorLevels[1]),
+        Aroma("Canned", wedgeColor: self.colorLevels[1]),
+        Aroma("Dried", wedgeColor: self.colorLevels[1]),
+        Aroma("Nutty", wedgeColor: self.colorLevels[0]),
+        Aroma("Caramelized", wedgeColor: self.colorLevels[0]),
+        Aroma("Woody", wedgeColor: self.colorLevels[0]),
+        Aroma("Earthy", wedgeColor: self.colorLevels[0]),
+        Aroma("Chemical", wedgeColor: self.colorLevels[0]),
+        
+        Aroma("Microbiological", wedgeColor: self.colorLevels[0]),
+        Aroma("Floral", wedgeColor: self.colorLevels[0]),	
+        Aroma("Spicy", wedgeColor: self.colorLevels[0])]
+    
     private var numberOfAromas : Int {
         get {return aromas.count}
     }
@@ -84,12 +106,14 @@ class AromaWheelView: UIView {
     }
     
     override func drawRect(rect: CGRect){
-        UIColor.blueColor().set()
         for (index, aroma) in aromas.enumerate() {
             aroma.path = wedgeInCircleCenteredAtPoint(wheelCenter, withRadius:wheelRadius, numberOfSections: numberOfAromas, thisSectionNumber: index+1)
+            (aroma.color ?? colorLevels[2]).setStroke()
             aroma.path?.stroke()
             addLabelToWedge(wheelCenter, withRadius: wheelRadius, numberOfSections: numberOfAromas, thisSectionNumber: index+1, labelText : aroma.aromaDescription)
             aroma.color = UIColor.blueColor()
         }
     }
 }
+
+

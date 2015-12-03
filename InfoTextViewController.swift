@@ -17,12 +17,20 @@ class InfoTextViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         infoText.text = connectedCell?.infoText ?? ""
+        
+        let backButton = UIBarButtonItem(title: "Done", style: UIBarButtonItemStyle.Plain, target: self, action: "goBack")
+        navigationItem.rightBarButtonItem = backButton
+        
+    }
+    
+    func goBack(){
+        dismissViewControllerAnimated(true, completion: nil)
     }
 
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
-        view.sizeToFit()    //= CGSize(width: 320, height: 186)
-//        self.preferredContentSize = view.systemLayoutSizeFittingSize(UILayoutFittingCompressedSize)
+//        view.sizeToFit()    //= CGSize(width: 320, height: 186)
+        preferredContentSize = view.systemLayoutSizeFittingSize(UILayoutFittingCompressedSize)
     }
 
     /*

@@ -7,8 +7,10 @@
 //
 
 import UIKit
+import Foundation
+import CoreData
 
-class Review {
+class Review : NSManagedObject {
     
     var eyes = Eyes()
     var nose = Nose()

@@ -66,7 +66,7 @@ class AromaView: UIView, UIDynamicAnimatorDelegate {
             let panRotationSpeed = recognizer.velocityInView(self).y
             let currentRotationSpeed = wheelBehavior.angularVelocityForItem(aromaWheelView)
 //            print ("pan = " + String(panRotationSpeed) + ", current = " + String(currentRotationSpeed))
-            wheelBehavior.addAngularVelocity((panRotationSpeed-currentRotationSpeed)/1000, forItem: aromaWheelView)
+            wheelBehavior.addAngularVelocity((panRotationSpeed-currentRotationSpeed)/2000, forItem: aromaWheelView)
         }
     }
     

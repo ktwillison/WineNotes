@@ -17,7 +17,15 @@ class AromaTableViewCell: UITableViewCell {
 
     @IBOutlet weak var titleLabel: UILabel!
     
+    @IBOutlet weak var valueLabel: UILabel!
+    
     var aromaType : AromaType?
+    
+    var aromas : [Aroma] = [] {
+        didSet {
+            valueLabel.text = aromas.map({ $0.aromaDescription }).joinWithSeparator(", ")
+        }
+    }
     
     override func awakeFromNib() {
         super.awakeFromNib()

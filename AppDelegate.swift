@@ -7,12 +7,14 @@
 //
 
 import UIKit
+import CoreData
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
-
+    var document: UIManagedDocument?
+    var documentURL: NSURL?
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         // Override point for customization after application launch.
@@ -39,6 +41,38 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func applicationWillTerminate(application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
+    }
+    
+    // Convenience caller for app delegate
+    class var currentAppDelegate : AppDelegate? {
+        return ((UIApplication.sharedApplication().delegate) as? AppDelegate)
+    }
+    
+    // Convenience caller to return the document, doing so off of the main queue then excecuting the handler.
+    func getContext(handler: ((NSManagedObjectContext, success : Bool) -> Void)){
+        if document != nil && documentURL != nil {
+            
+            // If doc is open, excecute handler
+            if document!.documentState == .Normal {
+                handler(document!.managedObjectContext, success: true)
+                
+            } else if document!.documentState == .Closed {
+                // Create and open document if it does not exist
+                if let path = documentURL!.path where !NSFileManager.defaultManager().fileExistsAtPath(path){
+                    document!.saveToURL(document!.fileURL, forSaveOperation: .ForCreating) { success in
+                        self.document!.openWithCompletionHandler { (success: Bool) in handler(self.document!.managedObjectContext, success: success) }
+                    }
+                    
+                    // Otherwise open document and execute handler
+                } else {
+                    document!.openWithCompletionHandler { (success: Bool) in handler(self.document!.managedObjectContext, success: success) }
+                }
+                
+                // Pass success = false back to handler if some other state
+            } else {
+                handler(document!.managedObjectContext, success: false)
+            }
+        }
     }
 
 

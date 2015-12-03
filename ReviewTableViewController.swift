@@ -7,8 +7,9 @@
 //
 
 import UIKit
+import CoreData
 
-class ReviewTableViewController: UITableViewController, UIPopoverPresentationControllerDelegate {
+class ReviewTableViewController: UITableViewController, UIPopoverPresentationControllerDelegate, InfoTextPresentationDelegate {
     
     let review = Review()
     var selectedIndexPath : NSIndexPath?
@@ -33,20 +34,20 @@ class ReviewTableViewController: UITableViewController, UIPopoverPresentationCon
         // Eyes
         "Color" : RatingCell(cellTitle: "Color", cellType: CellType.colorPicker),
         "Opacity" : RatingCell(cellTitle: "Opacity", cellType: CellType.slider, sliderStyle: .LowMedHigh),
-        "Rim" : RatingCell(cellTitle: "Rim", cellType: CellType.slider, sliderStyle: .Numeric),
+        "Rim" : RatingCell(cellTitle: "Rim Width", cellType: CellType.slider, sliderStyle: .Numeric),
         "Spritz" : RatingCell(cellTitle: "Spritz", cellType: CellType.slider, sliderStyle: .Numeric),
         
         // Nose
-        "NoseAroma" : RatingCell(cellTitle: "NoseAroma", cellType: CellType.aroma),
+        "NoseAroma" : RatingCell(cellTitle: "Scent Aromas", cellType: CellType.aroma),
         "Openness" : RatingCell(cellTitle: "Openness", cellType: CellType.slider, sliderStyle: .Openness),
         
         // Mouth
-        "MouthAroma" : RatingCell(cellTitle: "MouthAroma", cellType: CellType.aroma),
+        "MouthAroma" : RatingCell(cellTitle: "Taste Aromas", cellType: CellType.aroma),
         "Body" : RatingCell(cellTitle: "Body", cellType: CellType.slider, sliderStyle: .LowMedHigh, infoText: AppData.descriptions["Body"]!),
         "Acidity" : RatingCell(cellTitle: "Acidity", cellType: CellType.slider, sliderStyle: .LowMedHigh),
         "Alcohol" : RatingCell(cellTitle: "Alcohol", cellType: CellType.slider, sliderStyle: .LowMedHigh),
         "Tannins" : RatingCell(cellTitle: "Tannins", cellType: CellType.slider, sliderStyle: .LowMedHigh),
-        "ResidualSugar" : RatingCell(cellTitle: "ResidualSugar", cellType: CellType.slider, sliderStyle: .Numeric),
+        "ResidualSugar" : RatingCell(cellTitle: "Residual Sugar", cellType: CellType.slider, sliderStyle: .Numeric),
         
         // General
         "Rating" : RatingCell(cellTitle: "Rating", cellType: CellType.slider, sliderStyle: .Numeric),
@@ -108,6 +109,10 @@ class ReviewTableViewController: UITableViewController, UIPopoverPresentationCon
 
         tableView.rowHeight = UITableViewAutomaticDimension
         tableView.estimatedRowHeight = 160.0
+        title = "Wine Notes"
+        
+        // Set managedObjectContext
+        setManagedObjectContext()
         
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
@@ -132,10 +137,11 @@ class ReviewTableViewController: UITableViewController, UIPopoverPresentationCon
         let cell = tableView.dequeueReusableCellWithIdentifier(cellInfo.identifier, forIndexPath: indexPath)
         
         if let cell = cell as? SliderTableViewCell {
+            cell.delegate = self
             cell.titleLabel?.text = cellInfo.title
             cell.connectedCell = cellInfo
             cell.addGestureRecognizer(UITapGestureRecognizer(target: cell, action: "moveSliderToPoint:"))
-            cell.showInfoText.tag = getCellTag(indexPath)
+            cell.showInfoTextButton.tag = getCellTag(indexPath)
         } else if let cell = cell as? PickerTableViewCell {
 //            if cellInfo.pickerValues.count == 0 {
 //                cell.hidden = true
@@ -154,10 +160,13 @@ class ReviewTableViewController: UITableViewController, UIPopoverPresentationCon
 //            }
         } else if let cell = cell as? AromaTableViewCell {
             cell.titleLabel?.text = cellInfo.title
+            aromaIndecies.insert(indexPath)
             if headings[indexPath.section] == "Mouth" {
                 cell.aromaType = AromaType.Mouth
+                cell.aromas = review.mouth.aromas ?? []
             } else {
                 cell.aromaType = AromaType.Nose
+                cell.aromas = review.nose.aromas ?? []
             }
         } else {
 //            cell.textLabel?.text = cellInfo.title
@@ -239,6 +248,10 @@ class ReviewTableViewController: UITableViewController, UIPopoverPresentationCon
 
     // MARK: - Navigation
     
+    func callSegueFromCell(sender: UIButton) {
+        performSegueWithIdentifier(SegueType.showInfoText, sender: sender)
+    }
+    
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         if segue.identifier == SegueType.showAromaWheel {
             let vc = segue.destinationViewController as! AromaViewController
@@ -258,6 +271,7 @@ class ReviewTableViewController: UITableViewController, UIPopoverPresentationCon
                     }
                     if let ppc = infoTextVC.popoverPresentationController {
                         ppc.sourceRect = senderButton.frame
+                        ppc.delegate = self
                     }
             }
         }
@@ -267,18 +281,66 @@ class ReviewTableViewController: UITableViewController, UIPopoverPresentationCon
 //        return .None
 //    }
 
+    
     func presentationController(controller: UIPresentationController, viewControllerForAdaptivePresentationStyle style: UIModalPresentationStyle) -> UIViewController? {
         if style == .FullScreen {
             let navcon = UINavigationController(rootViewController: controller.presentedViewController)
+            let visualEffectView = UIVisualEffectView(effect: UIBlurEffect(style: .ExtraLight))
+            visualEffectView.frame = navcon.view.bounds
+            visualEffectView.autoresizingMask = [.FlexibleWidth,.FlexibleHeight]
+            navcon.view.insertSubview(visualEffectView, atIndex: 0)
             return navcon
         }
         return nil
     }
     
+    var aromaIndecies = Set<NSIndexPath>()
     @IBAction func updateAromas(segue : UIStoryboardSegue) {
-        print("done!")
+        tableView.reloadRowsAtIndexPaths(Array(aromaIndecies), withRowAnimation: .Automatic)
     }
-
+    
+    
+    //MARK: - Core Data
+    var managedObjectContext: NSManagedObjectContext?
+    
+    private func updateDatabase(newReview: Review){
+        
+        // managedObjectContext set in viewDidLoad
+        managedObjectContext!.performBlock {
+            
+            // Put review into database
+            WineReview.wineReviewFromReview(newReview, inManagedObjectContext: self.managedObjectContext!)
+            
+            //Save document, just to be safe :)
+            AppDelegate.currentAppDelegate?.document?.saveToURL(
+                (AppDelegate.currentAppDelegate?.document?.fileURL)!,
+                forSaveOperation:.ForOverwriting
+                ){success in}
+        }
+        
+        printDatabaseStatistics(managedObjectContext!)
+    }
+    
+    // Print DB stats
+    private func printDatabaseStatistics(context: NSManagedObjectContext) {
+        context.performBlock {
+            // the most efficient way to count objects
+            let reviewCount = context.countForFetchRequest(NSFetchRequest(entityName: "WineReview"), error: nil)
+            print("\(reviewCount) Reviews")
+        }
+    }
+    
+    // Sets (or re-tries setting) managed object context
+    func setManagedObjectContext() {
+        AppDelegate.currentAppDelegate?.getContext { [weak weakSelf = self] (context, success) in
+            if success {
+                weakSelf?.managedObjectContext = context
+            } else {
+                // This may cause an endless loop.. but shouldn't as long as document state isn't whack
+                weakSelf?.setManagedObjectContext()
+            }
+        }
+    }
 }
 
 class RatingCell {

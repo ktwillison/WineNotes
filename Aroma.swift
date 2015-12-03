@@ -6,14 +6,17 @@
 //  Copyright © 2015 Kate Willison. All rights reserved.
 //
 
+import Foundation
+import CoreData
 import UIKit
 
-class Aroma: NSObject {
-    init(_ description : String){
+class Aroma: NSManagedObject {
+    init(_ description : String, wedgeColor: UIColor? = nil){
         aromaDescription = description
+        color = wedgeColor
     }
     
-    var aromaDescription : String
+    var aromaDescription : String = ""
     var path : UIBezierPath?
     var color : UIColor?
     
@@ -26,6 +29,21 @@ class Aroma: NSObject {
             return (otherAroma.aromaDescription == aromaDescription) && (otherAroma.color == color)
         }
         return false
+    }
+    
+    class func aromaFromDescription(searchText: String, inManagedObjectContext context: NSManagedObjectContext) -> Aroma? {
+        // See if aroma is already in database
+        let request = NSFetchRequest(entityName: "Aroma")
+        request.predicate = NSPredicate(format: "aromaDesc = %@", searchText)
+        if let aroma = (try? context.executeFetchRequest(request))?.first as? Aroma {
+            return aroma
+            
+        // If not, create one, and add it to the database
+        } else if let aroma = NSEntityDescription.insertNewObjectForEntityForName("Aroma", inManagedObjectContext: context) as? Aroma {
+            aroma.aromaDesc = searchText
+            return aroma
+        }
+        return nil
     }
     
 }

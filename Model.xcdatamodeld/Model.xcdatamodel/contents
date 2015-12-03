@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="9057" systemVersion="15B42" minimumToolsVersion="Xcode 7.0">
+    <entity name="Aroma" representedClassName=".Aroma" syncable="YES">
+        <attribute name="aromaDesc" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="mouthReview" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="MouthReview" inverseName="aromas" inverseEntity="MouthReview" syncable="YES"/>
+        <relationship name="noseReview" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="NoseReview" inverseName="aromas" inverseEntity="NoseReview" syncable="YES"/>
+    </entity>
+    <entity name="EyesReview" representedClassName=".EyesReview" syncable="YES">
+        <attribute name="color" optional="YES" attributeType="Binary" syncable="YES"/>
+        <attribute name="opacity" optional="YES" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="rim" optional="YES" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="spritz" optional="YES" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
+        <relationship name="review" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="WineReview" inverseName="eyes" inverseEntity="WineReview" syncable="YES"/>
+    </entity>
+    <entity name="MouthReview" representedClassName=".MouthReview" syncable="YES">
+        <attribute name="acidity" optional="YES" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="alcohol" optional="YES" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="body" optional="YES" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="length" optional="YES" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="residualSugar" optional="YES" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="tannins" optional="YES" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
+        <relationship name="aromas" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="Aroma" inverseName="mouthReview" inverseEntity="Aroma" syncable="YES"/>
+        <relationship name="review" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="WineReview" inverseName="mouth" inverseEntity="WineReview" syncable="YES"/>
+    </entity>
+    <entity name="NoseReview" representedClassName=".NoseReview" syncable="YES">
+        <attribute name="openness" optional="YES" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
+        <relationship name="aromas" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="Aroma" inverseName="noseReview" inverseEntity="Aroma" syncable="YES"/>
+        <relationship name="review" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="WineReview" inverseName="nose" inverseEntity="WineReview" syncable="YES"/>
+    </entity>
+    <entity name="WineReview" representedClassName=".WineReview" syncable="YES">
+        <attribute name="country" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="date" optional="YES" attributeType="Date" syncable="YES"/>
+        <attribute name="rating" optional="YES" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="region" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="varietal" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="eyes" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="EyesReview" inverseName="review" inverseEntity="EyesReview" syncable="YES"/>
+        <relationship name="mouth" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="MouthReview" inverseName="review" inverseEntity="MouthReview" syncable="YES"/>
+        <relationship name="nose" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="NoseReview" inverseName="review" inverseEntity="NoseReview" syncable="YES"/>
+    </entity>
+    <elements>
+        <element name="WineReview" positionX="-218" positionY="-315" width="128" height="163"/>
+        <element name="EyesReview" positionX="-387" positionY="-27" width="128" height="118"/>
+        <element name="MouthReview" positionX="-27" positionY="-27" width="128" height="163"/>
+        <element name="NoseReview" positionX="-216" positionY="-27" width="128" height="88"/>
+        <element name="Aroma" positionX="-243" positionY="225" width="128" height="88"/>
+    </elements>
+</model>
