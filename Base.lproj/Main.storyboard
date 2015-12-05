@@ -452,7 +452,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="sCn-L8-ELC" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="454" y="2137"/>
+            <point key="canvasLocation" x="1145" y="1721"/>
         </scene>
         <!--Info Text View Controller-->
         <scene sceneID="YOC-ra-QwS">
@@ -664,11 +664,12 @@
                     <connections>
                         <segue destination="SII-Jh-Dx5" kind="relationship" relationship="viewControllers" id="qYo-fe-gOT"/>
                         <segue destination="DNH-Gn-712" kind="relationship" relationship="viewControllers" id="mqp-03-ws2"/>
+                        <segue destination="oqY-aD-zNU" kind="relationship" relationship="viewControllers" id="q77-im-Y02"/>
                     </connections>
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dRV-kJ-lss" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-895" y="1377"/>
+            <point key="canvasLocation" x="-887" y="1721"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="yZv-1K-2Fr">
@@ -688,7 +689,45 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Fpx-sV-njX" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-358" y="2137"/>
+            <point key="canvasLocation" x="333" y="1721"/>
+        </scene>
+        <!--Collection View Controller-->
+        <scene sceneID="AVZ-Zi-ZoZ">
+            <objects>
+                <collectionViewController id="oqY-aD-zNU" sceneMemberID="viewController">
+                    <collectionView key="view" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" id="zVX-5S-jf9">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <animations/>
+                        <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="wZH-as-LwD">
+                            <size key="itemSize" width="50" height="50"/>
+                            <size key="headerReferenceSize" width="0.0" height="0.0"/>
+                            <size key="footerReferenceSize" width="0.0" height="0.0"/>
+                            <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
+                        </collectionViewFlowLayout>
+                        <cells>
+                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="CH7-4Y-Dzi">
+                                <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                                    <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <animations/>
+                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                </view>
+                                <animations/>
+                            </collectionViewCell>
+                        </cells>
+                        <connections>
+                            <outlet property="dataSource" destination="oqY-aD-zNU" id="xLO-pZ-41F"/>
+                            <outlet property="delegate" destination="oqY-aD-zNU" id="YpS-aJ-Nq4"/>
+                        </connections>
+                    </collectionView>
+                    <tabBarItem key="tabBarItem" systemItem="contacts" id="N53-oR-RqT"/>
+                </collectionViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="dpC-43-rIp" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="86" y="2508"/>
         </scene>
     </scenes>
 </document>
