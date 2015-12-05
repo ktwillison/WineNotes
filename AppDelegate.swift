@@ -17,7 +17,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var documentURL: NSURL?
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
-        // Override point for customization after application launch.
+        // Set up appData UIManagedDocument
+        let fm = NSFileManager.defaultManager
+        if let docsDir = fm().URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask).first {
+            documentURL = docsDir.URLByAppendingPathComponent("WineNotes")
+            document = UIManagedDocument(fileURL: documentURL!)
+        }
         return true
     }
 
@@ -74,7 +79,5 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
         }
     }
-
-
 }
 

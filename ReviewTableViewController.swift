@@ -8,11 +8,15 @@
 
 import UIKit
 import CoreData
+import CoreImage
 
-class ReviewTableViewController: UITableViewController, UIPopoverPresentationControllerDelegate, InfoTextPresentationDelegate {
+class ReviewTableViewController: UITableViewController, UIPopoverPresentationControllerDelegate, InfoTextPresentationDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
     let review = Review()
     var selectedIndexPath : NSIndexPath?
+    var coreImageContext: CIContext!
+    var coreImageFilter: CIFilter!
+    
     
     // Keep track of reuse identifiers for each cell type
     private struct CellType {
@@ -20,6 +24,8 @@ class ReviewTableViewController: UITableViewController, UIPopoverPresentationCon
         static let colorPicker = "ColorPickerCell"
         static let aroma = "AromaCell"
         static let selection = "PickerCell"
+        static let imagePicker = "ImagePickerCell"
+        static let image = "ImageCell"
     }
     
     // Keep track of segue identifiers for each cell type
@@ -32,28 +38,30 @@ class ReviewTableViewController: UITableViewController, UIPopoverPresentationCon
     //Create a dictionary to define and retrieve values for each rating cell
     private let cellDictionary : Dictionary<String, RatingCell> = [
         // Eyes
-        "Color" : RatingCell(cellTitle: "Color", cellType: CellType.colorPicker),
-        "Opacity" : RatingCell(cellTitle: "Opacity", cellType: CellType.slider, sliderStyle: .LowMedHigh),
-        "Rim" : RatingCell(cellTitle: "Rim Width", cellType: CellType.slider, sliderStyle: .Numeric),
-        "Spritz" : RatingCell(cellTitle: "Spritz", cellType: CellType.slider, sliderStyle: .Numeric),
+        ReviewKeys.Color : RatingCell(cellTitle: "Color", cellType: CellType.colorPicker),
+        ReviewKeys.Opacity : RatingCell(cellTitle: "Opacity", cellType: CellType.slider, sliderStyle: .LowMedHigh),
+        ReviewKeys.Rim : RatingCell(cellTitle: "Rim Width", cellType: CellType.slider, sliderStyle: .Numeric),
+        ReviewKeys.Spritz : RatingCell(cellTitle: "Spritz", cellType: CellType.slider, sliderStyle: .Numeric),
         
         // Nose
-        "NoseAroma" : RatingCell(cellTitle: "Scent Aromas", cellType: CellType.aroma),
-        "Openness" : RatingCell(cellTitle: "Openness", cellType: CellType.slider, sliderStyle: .Openness),
+        ReviewKeys.NoseAroma : RatingCell(cellTitle: "Scent Aromas", cellType: CellType.aroma),
+        ReviewKeys.Openness : RatingCell(cellTitle: "Openness", cellType: CellType.slider, sliderStyle: .Openness),
         
         // Mouth
-        "MouthAroma" : RatingCell(cellTitle: "Taste Aromas", cellType: CellType.aroma),
-        "Body" : RatingCell(cellTitle: "Body", cellType: CellType.slider, sliderStyle: .LowMedHigh, infoText: AppData.descriptions["Body"]!),
-        "Acidity" : RatingCell(cellTitle: "Acidity", cellType: CellType.slider, sliderStyle: .LowMedHigh),
-        "Alcohol" : RatingCell(cellTitle: "Alcohol", cellType: CellType.slider, sliderStyle: .LowMedHigh),
-        "Tannins" : RatingCell(cellTitle: "Tannins", cellType: CellType.slider, sliderStyle: .LowMedHigh),
-        "ResidualSugar" : RatingCell(cellTitle: "Residual Sugar", cellType: CellType.slider, sliderStyle: .Numeric),
+        ReviewKeys.MouthAroma : RatingCell(cellTitle: "Taste Aromas", cellType: CellType.aroma),
+        ReviewKeys.Body : RatingCell(cellTitle: "Body", cellType: CellType.slider, sliderStyle: .LowMedHigh, infoText: AppData.descriptions["Body"]!),
+        ReviewKeys.Acidity : RatingCell(cellTitle: "Acidity", cellType: CellType.slider, sliderStyle: .LowMedHigh),
+        ReviewKeys.Alcohol : RatingCell(cellTitle: "Alcohol", cellType: CellType.slider, sliderStyle: .LowMedHigh),
+        ReviewKeys.Tannins : RatingCell(cellTitle: "Tannins", cellType: CellType.slider, sliderStyle: .LowMedHigh),
+        ReviewKeys.ResidualSugar : RatingCell(cellTitle: "Residual Sugar", cellType: CellType.slider, sliderStyle: .Numeric),
         
         // General
-        "Rating" : RatingCell(cellTitle: "Rating", cellType: CellType.slider, sliderStyle: .Numeric),
-        "Varietal" : RatingCell(cellTitle: "Varietal", cellType: CellType.selection, pickerValues: AppData.varietals),
-        "Country" : RatingCell(cellTitle: "Country", cellType: CellType.selection, pickerValues: AppData.countries()),
-        "Region" : RatingCell(cellTitle: "Region", cellType: CellType.selection, pickerValues: [])
+        ReviewKeys.Rating : RatingCell(cellTitle: "Rating", cellType: CellType.slider, sliderStyle: .Numeric),
+        ReviewKeys.Varietal : RatingCell(cellTitle: "Varietal", cellType: CellType.selection, pickerValues: AppData.varietals),
+        ReviewKeys.Country : RatingCell(cellTitle: "Country", cellType: CellType.selection, pickerValues: AppData.countries()),
+        ReviewKeys.Region : RatingCell(cellTitle: "Region", cellType: CellType.selection, pickerValues: []),
+        ReviewKeys.ImagePicker : RatingCell(cellTitle: "ImagePicker", cellType: CellType.imagePicker, pickerValues: []),
+        ReviewKeys.Image : RatingCell(cellTitle: "Image", cellType: CellType.image, pickerValues: [])
     ]
     
     func updateRegionList(){
@@ -81,7 +89,7 @@ class ReviewTableViewController: UITableViewController, UIPopoverPresentationCon
         [self.cellDictionary["MouthAroma"]!, self.cellDictionary["Body"]!, self.cellDictionary["Acidity"]!, self.cellDictionary["Alcohol"]!, self.cellDictionary["Tannins"]!, self.cellDictionary["ResidualSugar"]!],
         
         // General
-        [self.cellDictionary["Rating"]!, self.cellDictionary["Varietal"]!, self.cellDictionary["Country"]!, self.cellDictionary["Region"]!]
+        [self.cellDictionary["Rating"]!, self.cellDictionary["Varietal"]!, self.cellDictionary["Country"]!, self.cellDictionary["Region"]!, self.cellDictionary["ImagePicker"]!, self.cellDictionary["Image"]!]
     ]
     
     private func getCellTag(indexPath : NSIndexPath) -> Int {
@@ -114,6 +122,10 @@ class ReviewTableViewController: UITableViewController, UIPopoverPresentationCon
         // Set managedObjectContext
         setManagedObjectContext()
         
+        // Set up core image properties
+        coreImageContext = CIContext(options:nil)
+        coreImageFilter = CIFilter(name: "CIPhotoEffectChrome")
+        
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
 
@@ -121,6 +133,11 @@ class ReviewTableViewController: UITableViewController, UIPopoverPresentationCon
         // self.navigationItem.rightBarButtonItem = self.editButtonItem()
     }
 
+    // Update review object and store it in the database
+    @IBAction func submitReview(sender: UIBarButtonItem) {
+        review.updateFromCellDictionary(cellDictionary: cellDictionary)
+        addReviewToDatabase(review)
+    }
     
     // MARK: - Table view data source
 
@@ -142,22 +159,19 @@ class ReviewTableViewController: UITableViewController, UIPopoverPresentationCon
             cell.connectedCell = cellInfo
             cell.addGestureRecognizer(UITapGestureRecognizer(target: cell, action: "moveSliderToPoint:"))
             cell.showInfoTextButton.tag = getCellTag(indexPath)
+            
         } else if let cell = cell as? PickerTableViewCell {
-//            if cellInfo.pickerValues.count == 0 {
-//                cell.hidden = true
-//                cell.picker.hidden = true
-//            } else {
-                cell.connectedCell = cellInfo
-                cell.titleLabel?.text = cellInfo.title
-                if let index = cellInfo.value {
-                    cell.valueLabel?.text = cellInfo.pickerValues?[Int(index)]
-                } else {
-                    cell.valueLabel?.text = " "
-                }
-                cell.picker.hidden = (indexPath != selectedIndexPath)
-                if !cell.picker.hidden{ cell.picker.reloadAllComponents() }
+            cell.connectedCell = cellInfo
+            cell.titleLabel?.text = cellInfo.title
+            if let index = cellInfo.value {
+                cell.valueLabel?.text = cellInfo.pickerValues?[Int(index)]
+            } else {
+                cell.valueLabel?.text = " "
+            }
+            cell.picker.hidden = (indexPath != selectedIndexPath)
+            if !cell.picker.hidden{ cell.picker.reloadAllComponents() }
             updateRegionList()   /// NEED TO FIND A BETTER PLACE FOR THIS
-//            }
+            
         } else if let cell = cell as? AromaTableViewCell {
             cell.titleLabel?.text = cellInfo.title
             aromaIndecies.insert(indexPath)
@@ -168,11 +182,14 @@ class ReviewTableViewController: UITableViewController, UIPopoverPresentationCon
                 cell.aromaType = AromaType.Nose
                 cell.aromas = review.nose.aromas ?? []
             }
-        } else {
-//            cell.textLabel?.text = cellInfo.title
+            
+        } else if let cell = cell as? ImagePickerTableViewCell {
+            cell.controllerDelegate = self
+            
+        } else if let cell = cell as? ImageTableViewCell {
+            cell.originalImage = review.image
+            cell.controllerDelegate = self
         }
-        
-        // Configure the cell...
 
         return cell
     }
@@ -299,14 +316,39 @@ class ReviewTableViewController: UITableViewController, UIPopoverPresentationCon
         tableView.reloadRowsAtIndexPaths(Array(aromaIndecies), withRowAnimation: .Automatic)
     }
     
+    //MARK: - Image picker
+    func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : AnyObject]) {
+        review.image = (info[UIImagePickerControllerEditedImage] ?? info[UIImagePickerControllerOriginalImage]) as? UIImage
+        dismissViewControllerAnimated(true, completion: nil)
+    }
+    
+    private func saveImageToReview() {
+        if review.image != nil {
+            if let imageData = UIImageJPEGRepresentation(review.image!, 1.0),
+                let documentsDirectory = NSFileManager().URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask).first {
+                let unique = NSDate.timeIntervalSinceReferenceDate()
+                    let url = documentsDirectory.URLByAppendingPathComponent("\(unique).jpg")
+                    if imageData.writeToURL(url, atomically: true){
+                        review.imageURL = url
+                    }
+            }
+        }
+    }
+    
+    func imagePickerControllerDidCancel(picker: UIImagePickerController) {
+        dismissViewControllerAnimated(true, completion: nil)
+    }
     
     //MARK: - Core Data
     var managedObjectContext: NSManagedObjectContext?
     
-    private func updateDatabase(newReview: Review){
+    private func addReviewToDatabase(newReview: Review){
         
         // managedObjectContext set in viewDidLoad
         managedObjectContext!.performBlock {
+            
+            // Save a persistant copy of the image
+            self.saveImageToReview()
             
             // Put review into database
             WineReview.wineReviewFromReview(newReview, inManagedObjectContext: self.managedObjectContext!)
@@ -316,9 +358,8 @@ class ReviewTableViewController: UITableViewController, UIPopoverPresentationCon
                 (AppDelegate.currentAppDelegate?.document?.fileURL)!,
                 forSaveOperation:.ForOverwriting
                 ){success in}
+            self.printDatabaseStatistics(self.managedObjectContext!)
         }
-        
-        printDatabaseStatistics(managedObjectContext!)
     }
     
     // Print DB stats
@@ -360,121 +401,7 @@ class RatingCell {
         didSet { value = nil } // New array invalidates current index
     }
     var value : Double?
+    var colorValue : UIColor?
+    var boolValue : Bool?
 }
 
-struct AppData {
-    static let varietals = ["Barbera",
-        "Cabernet Franc",
-        "Cabernet Sauvignon and Blends",
-        "Carignane",
-        "Charbono",
-        "Chardonnay",
-        "Chenin Blanc",
-        "Dolcetto",
-        "Gamay",
-        "Gewurztraminer",
-        "Grenache",
-        "Gruner Veltliner",
-        "Lagrein",
-        "Malbec",
-        "Marsanne",
-        "Melon de Bourgogne",
-        "Merlot",
-        "Mourvedre",
-        "Nebbiolo",
-        "Petite Sirah",
-        "Pineau d'Aunis",
-        "Pinot Blanc",
-        "Pinot Gris",
-        "Pinot Noir",
-        "Rhone Blends",
-        "Riesling",
-        "Romorantin",
-        "Sangiovese",
-        "Sauvignon Blanc",
-        "Semillon",
-        "Shiraz/Syrah",
-        "Tempranillo",
-        "Viognier",
-        "Zinfandel"]
-    
-    static let regions : [(country: String, regionList:[String])] = [
-        ("Argentina", []),
-        ("Australia", ["New South Wales",
-            "South Australia",
-            "Victoria",
-            "Western Australia"]),
-        ("Austria", []),
-        ("Canada", []),
-        ("Chile", []),
-        ("Croatia", []),
-        ("France", ["Alsace",
-            "Beaujolais",
-            "Bordeaux",
-            "Burgundy",
-            "Chablis",
-            "Champagne",
-            "Languedoc-Roussillon",
-            "Loire",
-            "Provence",
-            "Rhone",
-            "Savoie/Jura",
-            "Southwest France"]),
-        ("Germany", ["Mittlerhein",
-            "Mosel-Saar-Ruwer",
-            "Nahe",
-            "Pfalz",
-            "Rheingau",
-            "Rheinhessen"]),
-        ("Greece", []),
-        ("Hungary", []),
-        ("Israel", []),
-        ("Italy", ["Abruzzo",
-            "Campania",
-            "Emilia Romagna",
-            "Friuli-Venezia-Giulia",
-            "Lombardy",
-            "Marche",
-            "Piedmont",
-            "Puglia",
-            "Sardinia",
-            "Sicily",
-            "Trentino-Alto Adige",
-            "Tuscany",
-            "Umbria",
-            "Veneto"]),
-        ("Mexico", []),
-        ("New Zealand", []),
-        ("Slovenia", []),
-        ("South Africa", []),
-        ("Spain", ["Navarra",
-            "Penedes",
-            "Priorato",
-            "Ribera del Duero",
-            "Rioja"]),
-        ("Switzerland", []),
-        ("United States", ["California",
-            "New York",
-            "Oregon",
-            "Washington"]),
-        ("Other", [])
-    ]
-    
-    static func countries() -> [String] {
-            var countryList : [String] = []
-            for r in regions {
-                countryList.append(r.country)
-            }
-            return countryList
-    }
-    
-    static func regionsForCountry(index: Int) -> [String] {
-            return regions[index].regionList
-    }
-    
-    static let descriptions : Dictionary<String, String> = [
-    "Openness" : "",
-    "Body" : "You can feel the 'body' of a wine much like you feel the difference between whole and fat-free milk: the former would have a 'full body', while the latter would have a 'light body'."
-    ]
-    
-}

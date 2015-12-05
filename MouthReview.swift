@@ -24,7 +24,7 @@ class MouthReview: NSManagedObject {
             
             let aromaList : NSMutableOrderedSet = NSMutableOrderedSet()
             for aroma in review.aromas ?? [] {
-                if let aromaDB = Aroma.aromaFromDescription(aroma.aromaDescription, inManagedObjectContext: context) {
+                if let aromaDB = AromaTag.aromaFromDescription(aroma.aromaDescription, inManagedObjectContext: context) {
                     aromaList.addObject(aromaDB)
                 }
             }

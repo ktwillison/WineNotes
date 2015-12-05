@@ -34,7 +34,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="750" verticalHuggingPriority="750" text="Label" textAlignment="right" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="AiU-K7-xKM">
-                                                    <rect key="frame" x="0.0" y="59" width="584" height="20.5"/>
+                                                    <rect key="frame" x="0.0" y="59" width="584" height="21"/>
                                                     <animations/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
@@ -59,8 +59,79 @@
                                     <segue destination="BYZ-38-t0r" kind="presentation" identifier="ShowAromaWheel" id="eVw-nF-1UX"/>
                                 </connections>
                             </tableViewCell>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="ImageCell" rowHeight="101" id="fcJ-pw-6jI" userLabel="ImageCell" customClass="ImageTableViewCell" customModule="WineNotes" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="124" width="600" height="101"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="fcJ-pw-6jI" id="MTP-G5-QvP">
+                                    <rect key="frame" x="0.0" y="0.0" width="600" height="101"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="22H-rg-Fb0">
+                                            <rect key="frame" x="8" y="8" width="584" height="85"/>
+                                            <animations/>
+                                        </imageView>
+                                    </subviews>
+                                    <animations/>
+                                    <constraints>
+                                        <constraint firstItem="22H-rg-Fb0" firstAttribute="trailing" secondItem="MTP-G5-QvP" secondAttribute="trailingMargin" id="aJR-gI-2dY"/>
+                                        <constraint firstItem="22H-rg-Fb0" firstAttribute="leading" secondItem="MTP-G5-QvP" secondAttribute="leadingMargin" id="eij-rj-MYK"/>
+                                        <constraint firstAttribute="bottomMargin" secondItem="22H-rg-Fb0" secondAttribute="bottom" id="jU7-Dw-k3D"/>
+                                        <constraint firstItem="22H-rg-Fb0" firstAttribute="top" secondItem="MTP-G5-QvP" secondAttribute="topMargin" id="kSg-hs-uXs"/>
+                                    </constraints>
+                                </tableViewCellContentView>
+                                <animations/>
+                                <connections>
+                                    <outlet property="pictureView" destination="22H-rg-Fb0" id="7OH-af-5RN"/>
+                                </connections>
+                            </tableViewCell>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="ImagePickerCell" rowHeight="90" id="yB4-e0-VW0" customClass="ImagePickerTableViewCell" customModule="WineNotes" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="225" width="600" height="90"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="yB4-e0-VW0" id="F1P-JJ-zmM">
+                                    <rect key="frame" x="0.0" y="0.0" width="600" height="90"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacing="7" translatesAutoresizingMaskIntoConstraints="NO" id="yqs-AN-t2W">
+                                            <rect key="frame" x="8" y="8" width="584" height="74"/>
+                                            <subviews>
+                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ttS-3a-Y5C">
+                                                    <rect key="frame" x="0.0" y="0.0" width="289" height="74"/>
+                                                    <animations/>
+                                                    <color key="backgroundColor" red="0.57254901960000004" green="0.80392156859999997" blue="0.53333333329999999" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <state key="normal" title="Take New Picture">
+                                                        <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                    </state>
+                                                    <connections>
+                                                        <action selector="takePhoto:" destination="yB4-e0-VW0" eventType="touchUpInside" id="wST-7N-Ko8"/>
+                                                    </connections>
+                                                </button>
+                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="EaJ-5e-eRO">
+                                                    <rect key="frame" x="296" y="0.0" width="288" height="74"/>
+                                                    <animations/>
+                                                    <color key="backgroundColor" red="0.57254901960000004" green="0.80392156859999997" blue="0.53333333329999999" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <state key="normal" title="Select Picture from Library">
+                                                        <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                    </state>
+                                                    <connections>
+                                                        <action selector="choosePhotoFromLibrary:" destination="yB4-e0-VW0" eventType="touchUpInside" id="X0L-eh-0v4"/>
+                                                    </connections>
+                                                </button>
+                                            </subviews>
+                                            <animations/>
+                                        </stackView>
+                                    </subviews>
+                                    <animations/>
+                                    <constraints>
+                                        <constraint firstAttribute="trailingMargin" secondItem="yqs-AN-t2W" secondAttribute="trailing" id="G44-FS-U7s"/>
+                                        <constraint firstAttribute="bottomMargin" secondItem="yqs-AN-t2W" secondAttribute="bottom" id="Re5-41-x2p"/>
+                                        <constraint firstItem="yqs-AN-t2W" firstAttribute="leading" secondItem="F1P-JJ-zmM" secondAttribute="leadingMargin" id="vaW-N7-IYv"/>
+                                        <constraint firstItem="yqs-AN-t2W" firstAttribute="top" secondItem="F1P-JJ-zmM" secondAttribute="topMargin" id="xOg-eS-SNU"/>
+                                    </constraints>
+                                </tableViewCellContentView>
+                                <animations/>
+                            </tableViewCell>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="SliderCell" rowHeight="120" id="sbN-R7-1uS" customClass="SliderTableViewCell" customModule="WineNotes" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="124" width="600" height="120"/>
+                                <rect key="frame" x="0.0" y="315" width="600" height="120"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="sbN-R7-1uS" id="6bc-Dz-oTO">
                                     <rect key="frame" x="0.0" y="0.0" width="600" height="120"/>
@@ -131,7 +202,7 @@
                                 </connections>
                             </tableViewCell>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="PickerCell" rowHeight="269" id="9Be-s8-1by" customClass="PickerTableViewCell" customModule="WineNotes" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="244" width="600" height="269"/>
+                                <rect key="frame" x="0.0" y="435" width="600" height="269"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="9Be-s8-1by" id="eOF-Pj-nhx">
                                     <rect key="frame" x="0.0" y="0.0" width="600" height="269"/>
@@ -184,7 +255,7 @@
                                 </connections>
                             </tableViewCell>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="ColorPickerCell" rowHeight="101" id="T7H-rn-Rsb">
-                                <rect key="frame" x="0.0" y="513" width="600" height="101"/>
+                                <rect key="frame" x="0.0" y="704" width="600" height="101"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="T7H-rn-Rsb" id="LbV-D7-b8J">
                                     <rect key="frame" x="0.0" y="0.0" width="600" height="101"/>
@@ -232,7 +303,13 @@
                         </connections>
                     </tableView>
                     <extendedEdge key="edgesForExtendedLayout"/>
-                    <navigationItem key="navigationItem" id="l6c-uw-eJO"/>
+                    <navigationItem key="navigationItem" id="l6c-uw-eJO">
+                        <barButtonItem key="rightBarButtonItem" title="Finish" id="qfI-cV-KAK">
+                            <connections>
+                                <action selector="submitReview:" destination="Vxg-gt-ssn" id="T8l-M8-kEG"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                     <connections>
                         <segue destination="OwD-M6-kSM" kind="popoverPresentation" identifier="ShowInfoText" popoverAnchorView="g5I-ea-KdK" id="qkd-Ma-nHh">
                             <popoverArrowDirection key="popoverArrowDirection" left="YES" right="YES"/>
@@ -243,25 +320,54 @@
             </objects>
             <point key="canvasLocation" x="1145" y="277"/>
         </scene>
-        <!--Table View Controller-->
+        <!--History Table View Controller-->
         <scene sceneID="BHP-Dt-4U5">
             <objects>
-                <tableViewController id="JQN-kq-sZj" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="oha-7X-iyX">
+                <tableViewController id="JQN-kq-sZj" customClass="HistoryTableViewController" customModule="WineNotes" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="94" sectionHeaderHeight="28" sectionFooterHeight="28" id="oha-7X-iyX">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <animations/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="RQ0-xX-IAl">
-                                <rect key="frame" x="0.0" y="28" width="600" height="44"/>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="RatingHistoryCell" rowHeight="94" id="RQ0-xX-IAl" customClass="RatingHistoryTableViewCell" customModule="WineNotes" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="28" width="600" height="94"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="RQ0-xX-IAl" id="zwg-lr-MIC">
-                                    <rect key="frame" x="0.0" y="0.0" width="600" height="44"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="600" height="94"/>
                                     <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="hrV-uS-yt9">
+                                            <rect key="frame" x="8" y="8" width="114" height="78"/>
+                                            <animations/>
+                                            <constraints>
+                                                <constraint firstAttribute="width" constant="114" id="5fq-s9-oV2"/>
+                                            </constraints>
+                                        </imageView>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="PqL-2h-lgA">
+                                            <rect key="frame" x="130" y="8" width="462" height="78"/>
+                                            <animations/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                    </subviews>
                                     <animations/>
+                                    <constraints>
+                                        <constraint firstAttribute="bottomMargin" secondItem="hrV-uS-yt9" secondAttribute="bottom" id="34Y-Hd-o2e"/>
+                                        <constraint firstItem="PqL-2h-lgA" firstAttribute="trailing" secondItem="zwg-lr-MIC" secondAttribute="trailingMargin" id="CNp-aK-JjH"/>
+                                        <constraint firstItem="hrV-uS-yt9" firstAttribute="leading" secondItem="zwg-lr-MIC" secondAttribute="leadingMargin" id="NP3-zI-iHX"/>
+                                        <constraint firstItem="PqL-2h-lgA" firstAttribute="leading" secondItem="hrV-uS-yt9" secondAttribute="trailing" constant="8" symbolic="YES" id="Tq4-Wa-1jc"/>
+                                        <constraint firstItem="PqL-2h-lgA" firstAttribute="bottom" secondItem="hrV-uS-yt9" secondAttribute="bottom" id="ZpF-hC-jrL"/>
+                                        <constraint firstItem="PqL-2h-lgA" firstAttribute="top" secondItem="hrV-uS-yt9" secondAttribute="top" id="y0Q-mA-yPn"/>
+                                        <constraint firstItem="hrV-uS-yt9" firstAttribute="top" secondItem="zwg-lr-MIC" secondAttribute="topMargin" id="zy0-q5-wA0"/>
+                                    </constraints>
                                 </tableViewCellContentView>
                                 <animations/>
+                                <connections>
+                                    <outlet property="cellImageView" destination="hrV-uS-yt9" id="yXs-lj-BYm"/>
+                                    <outlet property="cellTitle" destination="PqL-2h-lgA" id="tGN-5Z-7yK"/>
+                                </connections>
                             </tableViewCell>
                         </prototypes>
                         <connections>

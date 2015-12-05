@@ -10,15 +10,15 @@ import Foundation
 import CoreData
 import UIKit
 
-class Aroma: NSManagedObject {
+class Aroma: NSObject {
     init(_ description : String, wedgeColor: UIColor? = nil){
         aromaDescription = description
         color = wedgeColor
     }
     
-    var aromaDescription : String = ""
+    var aromaDescription : String!
     var path : UIBezierPath?
-    var color : UIColor?
+    var color : UIColor!
     
     
     // Added this method to avoid adding duplicate tags when the Aroma objects themselves
@@ -30,22 +30,6 @@ class Aroma: NSManagedObject {
         }
         return false
     }
-    
-    class func aromaFromDescription(searchText: String, inManagedObjectContext context: NSManagedObjectContext) -> Aroma? {
-        // See if aroma is already in database
-        let request = NSFetchRequest(entityName: "Aroma")
-        request.predicate = NSPredicate(format: "aromaDesc = %@", searchText)
-        if let aroma = (try? context.executeFetchRequest(request))?.first as? Aroma {
-            return aroma
-            
-        // If not, create one, and add it to the database
-        } else if let aroma = NSEntityDescription.insertNewObjectForEntityForName("Aroma", inManagedObjectContext: context) as? Aroma {
-            aroma.aromaDesc = searchText
-            return aroma
-        }
-        return nil
-    }
-    
 }
 
 func == (left: Aroma, right: Aroma) -> Bool {

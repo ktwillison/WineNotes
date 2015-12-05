@@ -1,5 +1,5 @@
 //
-//  Aroma+CoreDataProperties.swift
+//  AromaTag+CoreDataProperties.swift
 //  WineNotes
 //
 //  Created by Katie Willison on 12/3/15.
@@ -12,9 +12,9 @@
 import Foundation
 import CoreData
 
-extension Aroma {
+extension AromaTag {
 
-    @NSManaged var aromaDesc: String?
+    @NSManaged var aromaDescription: String?
     @NSManaged var noseReview: NSSet?
     @NSManaged var mouthReview: NSSet?
 

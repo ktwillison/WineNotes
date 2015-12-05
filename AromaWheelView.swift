@@ -29,7 +29,6 @@ class AromaWheelView: UIView {
         Aroma("Woody", wedgeColor: self.colorLevels[0]),
         Aroma("Earthy", wedgeColor: self.colorLevels[0]),
         Aroma("Chemical", wedgeColor: self.colorLevels[0]),
-        
         Aroma("Microbiological", wedgeColor: self.colorLevels[0]),
         Aroma("Floral", wedgeColor: self.colorLevels[0]),	
         Aroma("Spicy", wedgeColor: self.colorLevels[0])]
