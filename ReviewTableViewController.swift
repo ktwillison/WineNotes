@@ -376,7 +376,7 @@ class ReviewTableViewController: UITableViewController, UIPopoverPresentationCon
                 let unique = NSDate.timeIntervalSinceReferenceDate()
                     let url = documentsDirectory.URLByAppendingPathComponent("\(unique).jpg")
                     if imageData.writeToURL(url, atomically: true){
-                        review.imageURL = url
+                        review.imageURL = "\(unique).jpg" //url
                     }
             }
         }

@@ -22,7 +22,7 @@ class Review : NSObject {
     var region : String?
     var name : String?
     var image : UIImage?
-    var imageURL : NSURL?
+    var imageURL : String?
     
     func updateFromCellDictionary(cellDictionary dict : Dictionary<String, RatingCell>) {
         eyes.color = dict[ReviewKeys.Color]?.colorValue

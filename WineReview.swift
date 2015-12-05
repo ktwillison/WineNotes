@@ -31,9 +31,7 @@ class WineReview: NSManagedObject {
             wineReview.eyes = EyesReview.eyesReviewFromReview(review.eyes, inManagedObjectContext: context)
             wineReview.nose = NoseReview.noseReviewFromReview(review.nose, inManagedObjectContext: context)
             wineReview.mouth = MouthReview.mouthReviewFromReview(review.mouth, inManagedObjectContext: context)
-            if review.image != nil {
-                wineReview.imageURL =  NSKeyedArchiver.archivedDataWithRootObject(review.imageURL!)
-            }
+            wineReview.imageURL =  review.imageURL
 
             return wineReview
         }
@@ -56,8 +54,13 @@ class WineReview: NSManagedObject {
     }
     
     func getImage() -> UIImage? {
+        // Get relative path
         if let reviewImageURL = imageURL {
-            if let imageURL = NSKeyedUnarchiver.unarchiveObjectWithData(reviewImageURL) as? NSURL {
+            
+            // Resolve to full path
+            if let documentsDirectory = NSFileManager().URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask).first {
+                let imageURL = documentsDirectory.URLByAppendingPathComponent(reviewImageURL)
+        
                 if let imageData = NSData(contentsOfURL: imageURL) {
                     return UIImage(data: imageData)
                 }

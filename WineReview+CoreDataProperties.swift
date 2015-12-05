@@ -16,11 +16,11 @@ extension WineReview {
 
     @NSManaged var country: String?
     @NSManaged var date: NSDate?
-    @NSManaged var imageURL: NSData?
+    @NSManaged var imageURL: String?
+    @NSManaged var name: String?
     @NSManaged var rating: NSNumber?
     @NSManaged var region: String?
     @NSManaged var varietal: String?
-    @NSManaged var name: String?
     @NSManaged var eyes: EyesReview?
     @NSManaged var mouth: MouthReview?
     @NSManaged var nose: NoseReview?

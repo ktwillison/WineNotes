@@ -22,6 +22,7 @@ class HistoryTableViewController: UITableViewController, UISearchResultsUpdating
     private var dataSource : [WineReview]? {
         get {
             if userIsSearching {
+                if searchController.searchBar.text == "" {return reviews}
                 return filteredReviews
             } else {
                 return reviews
