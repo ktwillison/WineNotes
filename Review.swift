@@ -20,27 +20,9 @@ class Review : NSObject {
     var varietal : String? // eventually change these to enums
     var country : String?
     var region : String?
+    var name : String?
     var image : UIImage?
     var imageURL : NSURL?
-    
-    struct ReviewKeys {
-        static let Color = "Color"
-        static let Opacity = "Opacity"
-        static let Rim = "Rim"
-        static let Spritz = "Spritz"
-        static let NoseAroma = "NoseAroma"
-        static let Openness = "Openness"
-        static let MouthAroma = "MouthAroma"
-        static let Body = "Body"
-        static let Acidity = "Acidity"
-        static let Alcohol = "Alcohol"
-        static let Tannins = "Tannins"
-        static let ResidualSugar = "ResidualSugar"
-        static let Rating = "Rating"
-        static let Varietal = "Varietal"
-        static let Country = "Country"
-        static let Region = "Region"
-    }
     
     func updateFromCellDictionary(cellDictionary dict : Dictionary<String, RatingCell>) {
         eyes.color = dict[ReviewKeys.Color]?.colorValue
@@ -57,6 +39,7 @@ class Review : NSObject {
         mouth.residualSugar = dict[ReviewKeys.ResidualSugar]?.value
 
         rating = dict[ReviewKeys.Rating]?.value
+        name = dict[ReviewKeys.Name]?.textValue
         if let index = dict[ReviewKeys.Varietal]?.value {
             varietal = dict[ReviewKeys.Varietal]?.pickerValues?[Int(index)]
         }

@@ -8,7 +8,7 @@
 
 import Foundation
 import CoreData
-
+import UIKit
 
 class WineReview: NSManagedObject {
 
@@ -26,6 +26,7 @@ class WineReview: NSManagedObject {
             wineReview.rating = review.rating
             wineReview.region = review.region
             wineReview.country = review.country
+            wineReview.name = review.name
             wineReview.varietal = review.varietal
             wineReview.eyes = EyesReview.eyesReviewFromReview(review.eyes, inManagedObjectContext: context)
             wineReview.nose = NoseReview.noseReviewFromReview(review.nose, inManagedObjectContext: context)
@@ -52,5 +53,16 @@ class WineReview: NSManagedObject {
             return results
         }
         return []
+    }
+    
+    func getImage() -> UIImage? {
+        if let reviewImageURL = imageURL {
+            if let imageURL = NSKeyedUnarchiver.unarchiveObjectWithData(reviewImageURL) as? NSURL {
+                if let imageData = NSData(contentsOfURL: imageURL) {
+                    return UIImage(data: imageData)
+                }
+            }
+        }
+        return nil
     }
 }

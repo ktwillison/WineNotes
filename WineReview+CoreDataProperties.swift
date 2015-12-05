@@ -20,6 +20,7 @@ extension WineReview {
     @NSManaged var rating: NSNumber?
     @NSManaged var region: String?
     @NSManaged var varietal: String?
+    @NSManaged var name: String?
     @NSManaged var eyes: EyesReview?
     @NSManaged var mouth: MouthReview?
     @NSManaged var nose: NoseReview?

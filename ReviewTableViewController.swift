@@ -10,7 +10,7 @@ import UIKit
 import CoreData
 import CoreImage
 
-class ReviewTableViewController: UITableViewController, UIPopoverPresentationControllerDelegate, InfoTextPresentationDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+class ReviewTableViewController: UITableViewController, UIPopoverPresentationControllerDelegate, InfoTextPresentationDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITextFieldDelegate {
     
     let review = Review()
     var selectedIndexPath : NSIndexPath?
@@ -26,6 +26,7 @@ class ReviewTableViewController: UITableViewController, UIPopoverPresentationCon
         static let selection = "PickerCell"
         static let imagePicker = "ImagePickerCell"
         static let image = "ImageCell"
+        static let text = "TextCell"
     }
     
     // Keep track of segue identifiers for each cell type
@@ -60,6 +61,7 @@ class ReviewTableViewController: UITableViewController, UIPopoverPresentationCon
         ReviewKeys.Varietal : RatingCell(cellTitle: "Varietal", cellType: CellType.selection, pickerValues: AppData.varietals),
         ReviewKeys.Country : RatingCell(cellTitle: "Country", cellType: CellType.selection, pickerValues: AppData.countries()),
         ReviewKeys.Region : RatingCell(cellTitle: "Region", cellType: CellType.selection, pickerValues: []),
+        ReviewKeys.Name : RatingCell(cellTitle: "Title", cellType: CellType.text),
         ReviewKeys.ImagePicker : RatingCell(cellTitle: "ImagePicker", cellType: CellType.imagePicker, pickerValues: []),
         ReviewKeys.Image : RatingCell(cellTitle: "Image", cellType: CellType.image, pickerValues: [])
     ]
@@ -79,17 +81,19 @@ class ReviewTableViewController: UITableViewController, UIPopoverPresentationCon
     private let headings = ["Eyes", "Nose", "Mouth", "General"]
     private lazy var cellList : [[RatingCell]] = [
         // Eyes
-//        [self.cellDictionary["Color"]!, self.cellDictionary["Opacity"]!, self.cellDictionary["Rim"]!, self.cellDictionary["Spritz"]!],
-        [self.cellDictionary["Opacity"]!, self.cellDictionary["Rim"]!, self.cellDictionary["Spritz"]!],
+//        [self.cellDictionary["Color"]!,
+        [self.cellDictionary[ReviewKeys.Opacity]!, self.cellDictionary[ReviewKeys.Rim]!, self.cellDictionary[ReviewKeys.Spritz]!],
         
         // Nose
-        [self.cellDictionary["NoseAroma"]!, self.cellDictionary["Openness"]!],
+        [self.cellDictionary[ReviewKeys.NoseAroma]!, self.cellDictionary[ReviewKeys.Openness]!],
         
         // Mouth
-        [self.cellDictionary["MouthAroma"]!, self.cellDictionary["Body"]!, self.cellDictionary["Acidity"]!, self.cellDictionary["Alcohol"]!, self.cellDictionary["Tannins"]!, self.cellDictionary["ResidualSugar"]!],
+        [self.cellDictionary[ReviewKeys.MouthAroma]!, self.cellDictionary[ReviewKeys.Body]!, self.cellDictionary[ReviewKeys.Acidity]!, self.cellDictionary[ReviewKeys.Alcohol]!, self.cellDictionary[ReviewKeys.Tannins]!, self.cellDictionary[ReviewKeys.ResidualSugar]!],
         
         // General
-        [self.cellDictionary["Rating"]!, self.cellDictionary["Varietal"]!, self.cellDictionary["Country"]!, self.cellDictionary["Region"]!, self.cellDictionary["ImagePicker"]!, self.cellDictionary["Image"]!]
+        [self.cellDictionary[ReviewKeys.Rating]!, self.cellDictionary[ReviewKeys.Varietal]!, self.cellDictionary[ReviewKeys.Country]!, self.cellDictionary[ReviewKeys.Region]!, self.cellDictionary[ReviewKeys.ImagePicker]!, self.cellDictionary[ReviewKeys.Image]!,
+            self.cellDictionary[ReviewKeys.Name]!
+        ]
     ]
     
     private func getCellTag(indexPath : NSIndexPath) -> Int {
@@ -182,6 +186,11 @@ class ReviewTableViewController: UITableViewController, UIPopoverPresentationCon
                 cell.aromaType = AromaType.Nose
                 cell.aromas = review.nose.aromas ?? []
             }
+            
+        } else if let cell = cell as? TextTableViewCell {
+            cell.connectedCell = cellInfo
+            cell.controllerDelegate = self
+            cell.titleLabel?.text = cellInfo.title
             
         } else if let cell = cell as? ImagePickerTableViewCell {
             cell.controllerDelegate = self
@@ -441,6 +450,7 @@ class RatingCell {
     }
     var value : Double?
     var colorValue : UIColor?
+    var textValue : String?
     var boolValue : Bool?
 }
 

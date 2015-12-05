@@ -8,16 +8,33 @@
 
 import UIKit
 import CoreData
+import Social
 
-class HistoryTableViewController: UITableViewController {
+class HistoryTableViewController: UITableViewController, UISearchResultsUpdating, UISearchBarDelegate {
     
-    var reviews : [WineReview]?
-    let ratingHistoryCell = "RatingHistoryCell"
+    private let ratingHistoryCell = "RatingHistoryCell"
+    
+    private var userIsSearching : Bool = false
+    var searchController: UISearchController!
+    
+    private var reviews : [WineReview]?
+    private var filteredReviews : [WineReview]?
+    private var dataSource : [WineReview]? {
+        get {
+            if userIsSearching {
+                return filteredReviews
+            } else {
+                return reviews
+            }
+        }
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         setManagedObjectContext()
+        configureSearchController()
+        
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
 
@@ -38,29 +55,83 @@ class HistoryTableViewController: UITableViewController {
     }
 
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return reviews?.count ?? 0
+        return dataSource?.count ?? 0
     }
 
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+        
         let cell = tableView.dequeueReusableCellWithIdentifier(ratingHistoryCell, forIndexPath: indexPath)
         
         if let cell = cell as? RatingHistoryTableViewCell {
-            cell.cellTitle.text = reviews?[indexPath.row].varietal
-            if let reviewImageURL = reviews?[indexPath.row].imageURL {
-                if let imageURL = NSKeyedUnarchiver.unarchiveObjectWithData(reviewImageURL) as? NSURL {
-                    if let imageData = NSData(contentsOfURL: imageURL) {
-                        cell.cellImageView.image = UIImage(data: imageData)
-                    }
-                }
-            }
-            
+            cell.associatedReview = dataSource?[indexPath.row]
+            cell.controllerDelegate = self
             return cell
         }
 
         return cell
     }
     
+    // MARK: - Search
+    
+    // Set up the search bar
+    func configureSearchController() {
+        searchController = UISearchController(searchResultsController: nil)
+        searchController.searchResultsUpdater = self
+        searchController.searchBar.delegate = self
+        //        searchController.dimsBackgroundDuringPresentation = true
+        searchController.searchBar.placeholder = "Search your past reviews"
+        searchController.searchBar.sizeToFit()
+        tableView.tableHeaderView = searchController.searchBar
+        
+    }
+    
+    func searchBarTextDidBeginEditing(searchBar: UISearchBar) {
+        userIsSearching = true
+        tableView.reloadData()
+    }
+    
+    func searchBarCancelButtonClicked(searchBar: UISearchBar) {
+        userIsSearching = false
+        tableView.reloadData()
+    }
+    
+    func searchBarSearchButtonClicked(searchBar: UISearchBar) {
+        if !userIsSearching {
+            userIsSearching = true
+            tableView.reloadData()
+        }
+        searchController.searchBar.resignFirstResponder()
+    }
+    
+    func updateSearchResultsForSearchController(searchController: UISearchController) {
+        let searchText = searchController.searchBar.text
+        
+        // Filter the array of wine reviews, matching on name, varietal and aroma
+        filteredReviews = reviews?.filter({ (thisReview) -> Bool in
+            var searchFields : [NSString] = [thisReview.name ?? "", thisReview.varietal ?? ""]
+            if let noseAromas = thisReview.nose?.aromas?.array as? [AromaTag] {
+                for aroma in noseAromas where aroma.aromaDescription != nil {
+                    searchFields.append(aroma.aromaDescription!)
+                }
+            }
+            if let mouthAromas = thisReview.mouth?.aromas?.array as? [AromaTag] {
+                for aroma in mouthAromas where aroma.aromaDescription != nil {
+                    searchFields.append(aroma.aromaDescription!)
+                }
+            }
+            
+            for field in searchFields {
+                if (field.rangeOfString(searchText!, options: NSStringCompareOptions.CaseInsensitiveSearch).location) != NSNotFound {
+                    return true
+                }
+            }
 
+            return false
+        })
+        
+        // Reload the tableview.
+        tableView.reloadData()
+    }
 
     /*
     // MARK: - Navigation
@@ -86,6 +157,20 @@ class HistoryTableViewController: UITableViewController {
                 weakSelf?.setManagedObjectContext()
             }
         }
+    }
+    
+    // MARK: - Social
+    
+    // Delegate function to post a review to facebook
+    // general tutorial from https://www.hackingwithswift.com/example-code/uikit/how-to-share-content-with-the-social-framework-and-slcomposeviewcontroller
+    func postToFacebook(forReview review: WineReview) {
+        let fbvc = SLComposeViewController(forServiceType: SLServiceTypeFacebook)
+        fbvc.setInitialText("I just tasted a fabulous \(review.varietal ?? "wine"), check it out!")
+        if let reviewImage = review.getImage(){
+            fbvc.addImage(reviewImage)
+        }
+        presentViewController(fbvc, animated: true, completion: nil)
+
     }
 
 }

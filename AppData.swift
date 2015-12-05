@@ -142,6 +142,7 @@ struct ReviewKeys {
     static let Varietal = "Varietal"
     static let Country = "Country"
     static let Region = "Region"
+    static let Name = "Name"
     static let ImagePicker = "ImagePicker"
     static let Image = "Image"
 }
