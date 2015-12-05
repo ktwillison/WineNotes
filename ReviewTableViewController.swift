@@ -187,8 +187,8 @@ class ReviewTableViewController: UITableViewController, UIPopoverPresentationCon
             cell.controllerDelegate = self
             
         } else if let cell = cell as? ImageTableViewCell {
-            cell.originalImage = review.image
-            cell.controllerDelegate = self
+            cell.imageView?.image = review.image
+            imageIndex = indexPath
         }
 
         return cell
@@ -218,7 +218,33 @@ class ReviewTableViewController: UITableViewController, UIPopoverPresentationCon
         // https://www.youtube.com/watch?v=VWgr_wNtGPM
         tableView.reloadRowsAtIndexPaths(reloadIndexPaths, withRowAnimation: .Automatic)
     }
-
+    
+    
+    // Calculate cell row height based on media size (or by  default for others)
+    override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+        let ratingCell = cellList[indexPath.section][indexPath.row]
+        switch ratingCell.identifier {
+        // If cell holds media, the height should be relative to the media object's width
+        case CellType.image:
+            if let reviewImage = review.image {
+                let aspectRatio = CGFloat(reviewImage.size.width / reviewImage.size.height)
+                let width = tableView.frame.size.width
+                let height = width / aspectRatio
+                return height
+            }
+            return UITableViewAutomaticDimension
+        default:
+            return UITableViewAutomaticDimension
+        }
+    }
+    
+    var imageIndex : NSIndexPath?
+    var aromaIndecies = Set<NSIndexPath>()
+    @IBAction func updateAromas(segue : UIStoryboardSegue) {
+        tableView.reloadRowsAtIndexPaths(Array(aromaIndecies), withRowAnimation: .Automatic)
+    }
+    
+    
     
 //    override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
 //        if indexPath == selectedIndexPath && cellList[indexPath.section][indexPath.row].identifier == CellType.selection {
@@ -311,15 +337,27 @@ class ReviewTableViewController: UITableViewController, UIPopoverPresentationCon
         return nil
     }
     
-    var aromaIndecies = Set<NSIndexPath>()
-    @IBAction func updateAromas(segue : UIStoryboardSegue) {
-        tableView.reloadRowsAtIndexPaths(Array(aromaIndecies), withRowAnimation: .Automatic)
-    }
-    
     //MARK: - Image picker
     func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : AnyObject]) {
         review.image = (info[UIImagePickerControllerEditedImage] ?? info[UIImagePickerControllerOriginalImage]) as? UIImage
+        applyFilterToImage()
+        if imageIndex != nil {
+            tableView.reloadRowsAtIndexPaths([imageIndex!], withRowAnimation: .Bottom)
+        }
         dismissViewControllerAnimated(true, completion: nil)
+    }
+    
+    // Applies the chrome filter to the selected image, because EVERYTHING LOOKS BETTER WITH CHROME
+    // Core image intro found at http://www.raywenderlich.com/76285/beginning-core-image-swift
+    private func applyFilterToImage() {
+        if review.image != nil {
+            let image = CIImage(image: review.image!)
+            coreImageFilter.setValue(image, forKey: kCIInputImageKey)
+            if let outputImage : CIImage = coreImageFilter.outputImage {
+                let cgimg = coreImageContext.createCGImage(outputImage, fromRect: outputImage.extent)
+                review.image = UIImage(CGImage: cgimg)
+            }
+        }
     }
     
     private func saveImageToReview() {
@@ -338,6 +376,7 @@ class ReviewTableViewController: UITableViewController, UIPopoverPresentationCon
     func imagePickerControllerDidCancel(picker: UIImagePickerController) {
         dismissViewControllerAnimated(true, completion: nil)
     }
+    
     
     //MARK: - Core Data
     var managedObjectContext: NSManagedObjectContext?
@@ -358,7 +397,7 @@ class ReviewTableViewController: UITableViewController, UIPopoverPresentationCon
                 (AppDelegate.currentAppDelegate?.document?.fileURL)!,
                 forSaveOperation:.ForOverwriting
                 ){success in}
-            self.printDatabaseStatistics(self.managedObjectContext!)
+//            self.printDatabaseStatistics(self.managedObjectContext!)
         }
     }
     

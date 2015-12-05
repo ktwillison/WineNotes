@@ -66,23 +66,20 @@
                                     <rect key="frame" x="0.0" y="0.0" width="600" height="101"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
-                                        <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="22H-rg-Fb0">
+                                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="fbK-W3-8cj">
                                             <rect key="frame" x="8" y="8" width="584" height="85"/>
                                             <animations/>
                                         </imageView>
                                     </subviews>
                                     <animations/>
                                     <constraints>
-                                        <constraint firstItem="22H-rg-Fb0" firstAttribute="trailing" secondItem="MTP-G5-QvP" secondAttribute="trailingMargin" id="aJR-gI-2dY"/>
-                                        <constraint firstItem="22H-rg-Fb0" firstAttribute="leading" secondItem="MTP-G5-QvP" secondAttribute="leadingMargin" id="eij-rj-MYK"/>
-                                        <constraint firstAttribute="bottomMargin" secondItem="22H-rg-Fb0" secondAttribute="bottom" id="jU7-Dw-k3D"/>
-                                        <constraint firstItem="22H-rg-Fb0" firstAttribute="top" secondItem="MTP-G5-QvP" secondAttribute="topMargin" id="kSg-hs-uXs"/>
+                                        <constraint firstItem="fbK-W3-8cj" firstAttribute="trailing" secondItem="MTP-G5-QvP" secondAttribute="trailingMargin" id="hIj-FU-gPe"/>
+                                        <constraint firstItem="fbK-W3-8cj" firstAttribute="top" secondItem="MTP-G5-QvP" secondAttribute="topMargin" id="hWe-Gi-DkC"/>
+                                        <constraint firstItem="fbK-W3-8cj" firstAttribute="leading" secondItem="MTP-G5-QvP" secondAttribute="leadingMargin" id="tbU-ze-sqs"/>
+                                        <constraint firstItem="fbK-W3-8cj" firstAttribute="centerY" secondItem="MTP-G5-QvP" secondAttribute="centerY" id="w39-3c-Xya"/>
                                     </constraints>
                                 </tableViewCellContentView>
                                 <animations/>
-                                <connections>
-                                    <outlet property="pictureView" destination="22H-rg-Fb0" id="7OH-af-5RN"/>
-                                </connections>
                             </tableViewCell>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="ImagePickerCell" rowHeight="90" id="yB4-e0-VW0" customClass="ImagePickerTableViewCell" customModule="WineNotes" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="225" width="600" height="90"/>
