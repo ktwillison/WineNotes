@@ -36,8 +36,12 @@ class SliderTableViewCell: UITableViewCell {
             
             slider.minimumValue = 0
             slider.maximumValue = Float((stopPoints?.count ?? 2) - 1)
-            slider.value = 0
-            changeValue(slider)
+            slider.value = 0.0
+            valueLabel?.text = " "
+            if connectedCell?.value != nil {
+                slider.value = Float((connectedCell?.value)!)
+                changeValue(slider)
+            }
         }
     }
 
@@ -77,18 +81,6 @@ class SliderTableViewCell: UITableViewCell {
         slider.value = slider.maximumValue * tappedAtPercent
         changeValue(slider)
     }
-    
-    
-//    override func awakeFromNib() {
-//        super.awakeFromNib()
-//        // Initialization code
-//    }
-//
-//    override func setSelected(selected: Bool, animated: Bool) {
-//        super.setSelected(selected, animated: animated)
-//
-//        // Configure the view for the selected state
-//    }
 
 }
 

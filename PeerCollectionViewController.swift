@@ -41,7 +41,6 @@ class PeerCollectionViewController: UICollectionViewController, MCBrowserViewCon
         // create the browser viewcontroller with a unique service name
         browserVC = MCBrowserViewController(serviceType:serviceType, session:session)
         browserVC.delegate = self;
-        showBrowser()
         
         advertiserAssistant = MCAdvertiserAssistant(serviceType:serviceType,
             discoveryInfo:nil, session:session)
@@ -110,8 +109,8 @@ class PeerCollectionViewController: UICollectionViewController, MCBrowserViewCon
         }
     }
     
-    private func showBrowser() {
-        // Show the browser view controller
+    // When selected, show the peer browser
+    @IBAction func showPeerBrowser(sender: UIBarButtonItem) {
         self.presentViewController(browserVC, animated: true, completion: nil)
     }
     

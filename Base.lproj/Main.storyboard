@@ -664,7 +664,7 @@
                     <connections>
                         <segue destination="SII-Jh-Dx5" kind="relationship" relationship="viewControllers" id="qYo-fe-gOT"/>
                         <segue destination="DNH-Gn-712" kind="relationship" relationship="viewControllers" id="mqp-03-ws2"/>
-                        <segue destination="oqY-aD-zNU" kind="relationship" relationship="viewControllers" id="q77-im-Y02"/>
+                        <segue destination="6Xb-gj-xnK" kind="relationship" relationship="viewControllers" id="q77-im-Y02"/>
                     </connections>
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dRV-kJ-lss" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -707,7 +707,7 @@
                         </collectionViewFlowLayout>
                         <cells>
                             <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="ReviewCell" id="CH7-4Y-Dzi" customClass="ReviewCollectionViewCell" customModule="WineNotes" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="0.0" width="111" height="102"/>
+                                <rect key="frame" x="0.0" y="64" width="111" height="102"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
                                     <rect key="frame" x="0.0" y="0.0" width="111" height="102"/>
@@ -736,11 +736,37 @@
                             <outlet property="delegate" destination="oqY-aD-zNU" id="YpS-aJ-Nq4"/>
                         </connections>
                     </collectionView>
-                    <tabBarItem key="tabBarItem" systemItem="contacts" id="N53-oR-RqT"/>
+                    <navigationItem key="navigationItem" id="P7U-w3-FRV">
+                        <barButtonItem key="rightBarButtonItem" title="Connect to Peers" id="YGz-i8-2G1">
+                            <connections>
+                                <action selector="showPeerBrowser:" destination="oqY-aD-zNU" id="Pds-g8-0qp"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                 </collectionViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dpC-43-rIp" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="86" y="2508"/>
+            <point key="canvasLocation" x="1145" y="2508"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="ggL-4x-hcR">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="6Xb-gj-xnK" sceneMemberID="viewController">
+                    <tabBarItem key="tabBarItem" systemItem="contacts" id="N53-oR-RqT"/>
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="Ziz-JT-TV2">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <animations/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="oqY-aD-zNU" kind="relationship" relationship="rootViewController" id="qk7-p8-2YD"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="w7s-UX-B4i" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="333" y="2508"/>
         </scene>
     </scenes>
 </document>
