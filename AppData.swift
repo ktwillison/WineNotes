@@ -7,8 +7,24 @@
 //
 
 import Foundation
+import CoreData
 
 struct AppData {
+    
+    static var managedObjectContext : NSManagedObjectContext?
+    
+    // Sets (or re-tries setting) managed object context
+    static func setManagedObjectContext() {
+        AppDelegate.currentAppDelegate?.getContext { (context, success) in
+            if success {
+                self.managedObjectContext = context
+            } else {
+                // This may cause an endless loop.. but shouldn't as long as document state isn't whack
+                self.setManagedObjectContext()
+            }
+        }
+    }
+    
     static let varietals = ["Barbera",
         "Cabernet Franc",
         "Cabernet Sauvignon and Blends",

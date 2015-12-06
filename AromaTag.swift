@@ -26,6 +26,4 @@ class AromaTag: NSManagedObject {
         }
         return nil
     }
-
-
 }

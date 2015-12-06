@@ -8,10 +8,10 @@
 
 import UIKit
 
-private let reuseIdentifier = "Tag"
-
 class TagCollectionViewController: UICollectionViewController {
 
+    private let reuseIdentifier = "Tag"
+    
     var aromaType : AromaType?
     var tags : [Aroma] = [] {
         didSet {

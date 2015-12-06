@@ -9,11 +9,13 @@
 import UIKit
 import CoreData
 import CoreImage
+import CoreLocation
 
-class ReviewTableViewController: UITableViewController, UIPopoverPresentationControllerDelegate, InfoTextPresentationDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITextFieldDelegate {
+class ReviewTableViewController: UITableViewController, UIPopoverPresentationControllerDelegate, InfoTextPresentationDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITextFieldDelegate, CLLocationManagerDelegate {
     
     let review = Review()
     var selectedIndexPath : NSIndexPath?
+    var coreLocationManager = CLLocationManager()
     var coreImageContext: CIContext!
     var coreImageFilter: CIFilter!
     
@@ -124,7 +126,8 @@ class ReviewTableViewController: UITableViewController, UIPopoverPresentationCon
         title = "Wine Notes"
         
         // Set managedObjectContext
-        setManagedObjectContext()
+//        setManagedObjectContext()
+        if AppData.managedObjectContext == nil {AppData.setManagedObjectContext() }
         
         // Set up core image properties
         coreImageContext = CIContext(options:nil)
@@ -388,18 +391,18 @@ class ReviewTableViewController: UITableViewController, UIPopoverPresentationCon
     
     
     //MARK: - Core Data
-    var managedObjectContext: NSManagedObjectContext?
+//    var managedObjectContext: NSManagedObjectContext?
     
     private func addReviewToDatabase(newReview: Review){
         
         // managedObjectContext set in viewDidLoad
-        managedObjectContext!.performBlock {
+        AppData.managedObjectContext!.performBlock {
             
             // Save a persistant copy of the image
             self.saveImageToReview()
             
             // Put review into database
-            WineReview.wineReviewFromReview(newReview, inManagedObjectContext: self.managedObjectContext!)
+            WineReview.wineReviewFromReview(newReview, inManagedObjectContext: AppData.managedObjectContext!)
             
             //Save document, just to be safe :)
             AppDelegate.currentAppDelegate?.document?.saveToURL(
@@ -419,17 +422,17 @@ class ReviewTableViewController: UITableViewController, UIPopoverPresentationCon
         }
     }
     
-    // Sets (or re-tries setting) managed object context
-    func setManagedObjectContext() {
-        AppDelegate.currentAppDelegate?.getContext { [weak weakSelf = self] (context, success) in
-            if success {
-                weakSelf?.managedObjectContext = context
-            } else {
-                // This may cause an endless loop.. but shouldn't as long as document state isn't whack
-                weakSelf?.setManagedObjectContext()
-            }
-        }
-    }
+//    // Sets (or re-tries setting) managed object context
+//    func setManagedObjectContext() {
+//        AppDelegate.currentAppDelegate?.getContext { [weak weakSelf = self] (context, success) in
+//            if success {
+//                weakSelf?.managedObjectContext = context
+//            } else {
+//                // This may cause an endless loop.. but shouldn't as long as document state isn't whack
+//                weakSelf?.setManagedObjectContext()
+//            }
+//        }
+//    }
 }
 
 class RatingCell {

@@ -33,7 +33,8 @@ class HistoryTableViewController: UITableViewController, UISearchResultsUpdating
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        setManagedObjectContext()
+//        setManagedObjectContext()
+        if AppData.managedObjectContext == nil {AppData.setManagedObjectContext() }
         configureSearchController()
         
         // Uncomment the following line to preserve selection between presentations
@@ -45,7 +46,7 @@ class HistoryTableViewController: UITableViewController, UISearchResultsUpdating
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
-        reviews = WineReview.getReviews(inManagedObjectContext: managedObjectContext!)
+        reviews = WineReview.getReviews(inManagedObjectContext: AppData.managedObjectContext!)
         tableView.reloadData()
     }
     
@@ -146,19 +147,19 @@ class HistoryTableViewController: UITableViewController, UISearchResultsUpdating
     
     // MARK: - Core Data
     
-    var managedObjectContext: NSManagedObjectContext?
-    
-    // Sets (or re-tries setting) managed object context
-    func setManagedObjectContext() {
-        AppDelegate.currentAppDelegate?.getContext { [weak weakSelf = self] (context, success) in
-            if success {
-                weakSelf?.managedObjectContext = context
-            } else {
-                // This may cause an endless loop.. but shouldn't as long as document state isn't whack
-                weakSelf?.setManagedObjectContext()
-            }
-        }
-    }
+//    var managedObjectContext: NSManagedObjectContext?
+//    
+//    // Sets (or re-tries setting) managed object context
+//    func setManagedObjectContext() {
+//        AppDelegate.currentAppDelegate?.getContext { [weak weakSelf = self] (context, success) in
+//            if success {
+//                weakSelf?.managedObjectContext = context
+//            } else {
+//                // This may cause an endless loop.. but shouldn't as long as document state isn't whack
+//                weakSelf?.setManagedObjectContext()
+//            }
+//        }
+//    }
     
     // MARK: - Social
     

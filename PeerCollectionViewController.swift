@@ -10,7 +10,7 @@
 import UIKit
 import MultipeerConnectivity
 
-let reuseIdentifier = "reuseIdentifier"
+let reuseIdentifier = "ReviewCell"
 
 class PeerCollectionViewController: UICollectionViewController, MCBrowserViewControllerDelegate, MCSessionDelegate {
     
@@ -21,11 +21,17 @@ class PeerCollectionViewController: UICollectionViewController, MCBrowserViewCon
     var session : MCSession!
     var myPeerID: MCPeerID!
     
-    @IBOutlet var chatView: UITextView!
-    @IBOutlet var messageField: UITextField!
+    var foundRatings : [String] = [] {
+        didSet{
+            collectionView?.reloadData()
+        }
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        //Set managedObjectContext
+        if AppData.managedObjectContext == nil {AppData.setManagedObjectContext() }
         
         // Get peerID from device name
         myPeerID = MCPeerID(displayName: UIDevice.currentDevice().name)
@@ -33,10 +39,9 @@ class PeerCollectionViewController: UICollectionViewController, MCBrowserViewCon
         session.delegate = self
         
         // create the browser viewcontroller with a unique service name
-        browserVC = MCBrowserViewController(serviceType:serviceType,
-            session:session)
-        
+        browserVC = MCBrowserViewController(serviceType:serviceType, session:session)
         browserVC.delegate = self;
+        showBrowser()
         
         advertiserAssistant = MCAdvertiserAssistant(serviceType:serviceType,
             discoveryInfo:nil, session:session)
@@ -45,47 +50,67 @@ class PeerCollectionViewController: UICollectionViewController, MCBrowserViewCon
         advertiserAssistant.start()
     }
     
-    func sendRating(rating : WineReview) {
-        // Send the given rating to all connected peers
-        
-        let msg = self.messageField.text.dataUsingEncoding(NSUTF8StringEncoding,
-            allowLossyConversion: false)
-        
-        var error : NSError?
-        
-        session.sendData(msg, toPeers: session.connectedPeers,
-            withMode: MCSessionSendDataMode.Unreliable, error: &error)
-        
-        if error != nil {
-            print("Error sending data: \(error?.localizedDescription)")
-        }
-        
-        self.updateResults(self.messageField.text, fromPeer: myPeerID)
-        
-        self.messageField.text = ""
+    // Send the given rating to all connected peers
+    func broadcastRating(rating : WineReview) {
+        sendRatingToPeers(Review(fromWineReview: rating), peers: session.connectedPeers)
     }
     
-    func updateResults(text : String, fromPeer peerID: MCPeerID) {
-        // Appends some text to the chat view
-        
-        // If this peer ID is the local device's peer ID, then show the name
-        // as "Me"
-        var name : String
-        
-        switch peerID {
-        case peerID:
-            name = "Me"
-        default:
-            name = peerID.displayName
+    // Send recent ratings to a newly connected peer
+    func session(session: MCSession, peer peerID: MCPeerID, didChangeState state: MCSessionState) {
+        if state == .Connected {
+            for rating in WineReview.getRecentReviews(withinHours: 6, context: AppData.managedObjectContext!) {
+                sendRatingToPeers(Review(fromWineReview: rating), peers: [peerID])
+            }
         }
-        
-        // Add the name to the message and display it
-        let message = "\(name): \(text)\n"
-        self.chatView.text = self.chatView.text + message
-        
     }
     
-    @IBAction func showBrowser(sender: UIButton) {
+    // Asynchronously send data to peers
+    func sendRatingToPeers(rating : Review, peers : [MCPeerID], updateResults update : Bool = false) {
+        
+        // Set weak reference for memory cycles
+        dispatch_async(dispatch_get_global_queue(QOS_CLASS_USER_INITIATED, 0)) { [ weak weakSelf = self ] in
+            //            if let textToSend = rating.name {
+            let dataToSend = NSKeyedArchiver.archivedDataWithRootObject(rating)
+            //                if let msg = textToSend.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false){
+            do {
+                try self.session.sendData(dataToSend, toPeers: peers, withMode: MCSessionSendDataMode.Unreliable)
+                if (update) {weakSelf?.updateResults(withData: dataToSend, fromPeer: (weakSelf?.myPeerID)!)}
+            } catch (let error) {
+                print("Error sending data: \(error)")
+            }
+            //        }
+            //            }
+            
+            //            dispatch_async(dispatch_get_main_queue()) {
+            //                        weakSelf?.tweetImage = UIImage(data: imageData)
+            //                    }
+        }
+    }
+
+    
+//    func updateResults(text : String, fromPeer peerID: MCPeerID) {
+    func updateResults(withData data : NSData, fromPeer peerID: MCPeerID) {
+        
+        if let loadedReview = NSKeyedUnarchiver.unarchiveObjectWithData(data) as? Review {
+            
+            // If this peer ID is the local device's peer ID, then show the name
+            // as "Me"
+            var name : String
+            
+            switch peerID {
+            case peerID:
+                name = "Me"
+            default:
+                name = peerID.displayName
+            }
+            
+            // Add the name to the message and display it
+            foundRatings.append(loadedReview.name ?? "Review")
+            //        foundRatings.append(text)
+        }
+    }
+    
+    private func showBrowser() {
         // Show the browser view controller
         self.presentViewController(browserVC, animated: true, completion: nil)
     }
@@ -111,9 +136,10 @@ class PeerCollectionViewController: UICollectionViewController, MCBrowserViewCon
             // This needs to run on the main queue
             dispatch_async(dispatch_get_main_queue()) {
                 
-                var msg = NSString(data: data, encoding: NSUTF8StringEncoding)
+//                let msg = NSString(data: data, encoding: NSUTF8StringEncoding)
         
-                self.updateChat(msg, fromPeer: peerID)
+//                self.updateResults(String(msg), fromPeer: peerID)
+                self.updateResults(withData: data, fromPeer: peerID)
             }
     }
     
@@ -136,13 +162,6 @@ class PeerCollectionViewController: UICollectionViewController, MCBrowserViewCon
         withName streamName: String, fromPeer peerID: MCPeerID)  {
             // Called when a peer establishes a stream with us
     }
-    
-    func session(session: MCSession, peer peerID: MCPeerID,
-        didChangeState state: MCSessionState)  {
-            // Called when a connected peer changes state (for example, goes offline)
-            
-    }
-
 
     /*
     // MARK: - Navigation
@@ -157,20 +176,21 @@ class PeerCollectionViewController: UICollectionViewController, MCBrowserViewCon
     // MARK: UICollectionViewDataSource
 
     override func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int {
-        // #warning Incomplete implementation, return the number of sections
-        return 0
+        return 1
     }
 
 
     override func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of items
-        return 0
+        return foundRatings.count
     }
 
     override func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier(reuseIdentifier, forIndexPath: indexPath)
-    
-        // Configure the cell
+        
+        if let cell = cell as? ReviewCollectionViewCell {
+            cell.cellLabel.text = foundRatings[indexPath.row]
+        }
     
         return cell
     }

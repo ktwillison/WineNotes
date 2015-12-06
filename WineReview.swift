@@ -11,7 +11,7 @@ import CoreData
 import UIKit
 
 class WineReview: NSManagedObject {
-
+    
     class func wineReviewFromReview(review: Review, inManagedObjectContext context: NSManagedObjectContext) -> WineReview? {
 //        // See if tweet is already in database
 //        let request = NSFetchRequest(entityName: "Tweet")
@@ -32,6 +32,8 @@ class WineReview: NSManagedObject {
             wineReview.nose = NoseReview.noseReviewFromReview(review.nose, inManagedObjectContext: context)
             wineReview.mouth = MouthReview.mouthReviewFromReview(review.mouth, inManagedObjectContext: context)
             wineReview.imageURL =  review.imageURL
+            let unique = String(NSDate.timeIntervalSinceReferenceDate()) + "_" + UIDevice.currentDevice().identifierForVendor!.UUIDString
+            wineReview.id = unique
 
             return wineReview
         }
@@ -53,6 +55,20 @@ class WineReview: NSManagedObject {
         return []
     }
     
+    class func getRecentReviews(withinHours hours : Int, context: NSManagedObjectContext) -> [WineReview] {
+        
+        let dateCutoff = NSDate().dateByAddingTimeInterval(Double(-60*60*hours))
+        
+        let request = NSFetchRequest(entityName: "WineReview")
+        request.sortDescriptors = [NSSortDescriptor(key: "date", ascending: false)]
+        request.predicate = NSPredicate(format: "(date >= %@)", argumentArray: [dateCutoff])
+        
+        if let results = (try? context.executeFetchRequest(request)) as? [WineReview] {
+            return results
+        }
+        return []
+    }
+    
     func getImage() -> UIImage? {
         // Get relative path
         if let reviewImageURL = imageURL {
@@ -66,6 +82,6 @@ class WineReview: NSManagedObject {
                 }
             }
         }
-        return nil
+        return nil        
     }
 }
