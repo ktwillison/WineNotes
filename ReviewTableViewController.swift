@@ -145,11 +145,18 @@ class ReviewTableViewController: UITableViewController, UIPopoverPresentationCon
         review.updateFromCellDictionary(cellDictionary: cellDictionary)
         addReviewToDatabase(review)
         
+        // Send the review over with the compressed image
+        let reviewToSend = review
+        if review.image != nil,
+            let imageData = UIImageJPEGRepresentation(review.image!, 0.2) {
+                reviewToSend.image = UIImage(data: imageData)
+        }
+        
         // Send a notification (for e.g. peer connectivity)
         let notification = NSNotification(
             name: "AddReview",
             object: self,
-            userInfo: ["addedReview" : review]
+            userInfo: ["addedReview" : reviewToSend]
         )
         NSNotificationCenter.defaultCenter().postNotification(notification)
 

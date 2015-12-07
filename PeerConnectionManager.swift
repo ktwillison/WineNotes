@@ -72,7 +72,15 @@ class PeerConnectionManager: NSObject, MCSessionDelegate {
             if AppData.managedObjectContext == nil {AppData.setManagedObjectContext() }
             
             for rating in WineReview.getRecentReviews(withinHours: 6, context: AppData.managedObjectContext!) {
-                sendRatingToPeers(Review(fromWineReview: rating), peers: [peerID])
+                
+                // Send the review over with the compressed image
+                let reviewToSend = Review(fromWineReview: rating)
+                if reviewToSend.image != nil,
+                    let imageData = UIImageJPEGRepresentation(reviewToSend.image!, 0.2) {
+                        reviewToSend.image = UIImage(data: imageData)
+                }
+
+                sendRatingToPeers(reviewToSend, peers: [peerID])
             }
         } else {
             print ("Peer changed to state \(state.rawValue)")
@@ -107,11 +115,12 @@ class PeerConnectionManager: NSObject, MCSessionDelegate {
         
         if let loadedReview = NSKeyedUnarchiver.unarchiveObjectWithData(data) as? Review {
             
-            // Add the review to the found ratings if it hasn't been already
-            let foundMatchingRatings = receivedReviews.filter({ $0.id == loadedReview.id })
-            if foundMatchingRatings.count == 0 {
-                receivedReviews.append(loadedReview)
+            // Add the review to the found ratings, replacing it if it alrady existed
+            if let foundMatchingRatings = receivedReviews.indexOf({ $0.id == loadedReview.id }) {
+                receivedReviews.removeAtIndex(foundMatchingRatings)
             }
+            receivedReviews.append(loadedReview)
+            
         }
     }
     

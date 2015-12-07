@@ -63,6 +63,7 @@ class Review : NSObject, NSCoding {
         name = review.name
         varietal = review.varietal
         imageURL = review.imageURL
+        image = review.getImage()
         id = review.id
         if review.rating != nil {rating = Double(review.rating!)}
         
@@ -102,6 +103,7 @@ class Review : NSObject, NSCoding {
         country = decoder.decodeObjectForKey("country") as? String
         varietal = decoder.decodeObjectForKey("varietal") as? String
         imageURL = decoder.decodeObjectForKey("imageURL") as? String
+        image = decoder.decodeObjectForKey("image") as? UIImage
         
         eyes.opacity = decoder.decodeObjectForKey("eyes_opacity") as? Double
         eyes.rim = decoder.decodeObjectForKey("eyes_rim") as? Double
@@ -139,6 +141,7 @@ class Review : NSObject, NSCoding {
         if let country = country { coder.encodeObject(country, forKey: "country") }
         if let varietal = varietal { coder.encodeObject(varietal, forKey: "varietal") }
         if let imageURL = imageURL { coder.encodeObject(imageURL, forKey: "imageURL") }
+        if let image = image { coder.encodeObject(image, forKey: "image") }
         
         if let eyes_opacity = eyes.opacity { coder.encodeObject(eyes_opacity, forKey: "eyes_opacity") }
         if let eyes_rim = eyes.rim { coder.encodeObject(eyes_rim, forKey: "eyes_rim") }

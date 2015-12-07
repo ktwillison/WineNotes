@@ -12,4 +12,10 @@ class ReviewCollectionViewCell: UICollectionViewCell {
     
     @IBOutlet weak var cellLabel: UILabel!
     
+    @IBOutlet weak var cellVarietal: UILabel!
+    
+    @IBOutlet weak var cellRating: UILabel!
+    
+    @IBOutlet weak var cellImage: UIImageView!
+    
 }

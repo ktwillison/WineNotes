@@ -6,7 +6,6 @@
 //  Copyright © 2015 Kate Willison. All rights reserved.
 //
 
-
 import UIKit
 import MultipeerConnectivity
 
@@ -108,7 +107,14 @@ class PeerCollectionViewController: UICollectionViewController, MCBrowserViewCon
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier(reuseIdentifier, forIndexPath: indexPath)
         
         if let cell = cell as? ReviewCollectionViewCell {
-            cell.cellLabel.text = receivedReviews[indexPath.row].name
+            cell.cellLabel.text = receivedReviews[indexPath.row].name ?? "Untitled Wine"
+            cell.cellVarietal.text = receivedReviews[indexPath.row].varietal ?? " "
+            if let rating = receivedReviews[indexPath.row].rating {
+                cell.cellRating.text = String(rating)
+            } else {
+                cell.cellRating.text = " "
+            }
+            cell.cellImage.image = receivedReviews[indexPath.row].image
         }
     
         return cell
