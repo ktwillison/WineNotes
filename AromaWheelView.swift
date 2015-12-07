@@ -11,9 +11,10 @@ import UIKit
 @IBDesignable
 class AromaWheelView: UIView {
     
-    private let colorLevels = [UIColor(red:0.412, green:0.063, blue:0.176, alpha:1.00),
-        UIColor(red:0.506, green:0.090, blue:0.216, alpha:1.00),
-        UIColor(red:0.729, green:0.149, blue:0.314, alpha:1.00)]
+    private let colorLevels = [
+        UIColor(red:0.639, green:0.106, blue:0.263, alpha:1.00),
+        UIColor(red:0.522, green:0.075, blue:0.208, alpha:1.00),
+        UIColor(red:0.376, green:0.039, blue:0.145, alpha:1.00)]
     
     private lazy var aromas : [Aroma] = [
         Aroma("Fruity", wedgeColor: self.colorLevels[0]),	Aroma("Citrus", wedgeColor: self.colorLevels[1]),
@@ -28,8 +29,8 @@ class AromaWheelView: UIView {
         Aroma("Caramelized", wedgeColor: self.colorLevels[0]),
         Aroma("Woody", wedgeColor: self.colorLevels[0]),
         Aroma("Earthy", wedgeColor: self.colorLevels[0]),
-        Aroma("Chemical", wedgeColor: self.colorLevels[0]),
-        Aroma("Microbiological", wedgeColor: self.colorLevels[0]),
+        Aroma("Chemical", wedgeColor: self.colorLevels[2]),
+        Aroma("Microbiological", wedgeColor: self.colorLevels[2]),
         Aroma("Floral", wedgeColor: self.colorLevels[0]),	
         Aroma("Spicy", wedgeColor: self.colorLevels[0])]
     
@@ -43,9 +44,8 @@ class AromaWheelView: UIView {
     }
     
     @IBInspectable
-    var wheelRadius : CGFloat {
+    private var wheelRadius : CGFloat {
         return 0.99 * bounds.size.height / 2 * scale
-//        return min(bounds.size.width, bounds.size.height) / 2 * scale
     }
     
     @IBInspectable
@@ -91,15 +91,16 @@ class AromaWheelView: UIView {
         
         // Define a new UILabel and rotate to add it to this view
         let labelFrame = CGRect(
-            origin: CGPoint(x: wheelCenter.x-wheelRadius/2, y: wheelCenter.y-aromaLabelHeight/2),
+            origin: CGPoint(x: wheelCenter.x-aromaLabelWidth/2, y: wheelCenter.y-aromaLabelHeight/2),
             size: CGSize(width: aromaLabelWidth, height: aromaLabelHeight)
         )
         let label = UILabel(frame: labelFrame)
+        label.textColor = UIColor.whiteColor()
+        label.font = label.font.fontWithSize(20)
         label.text = labelText
         label.textAlignment = .Right
         label.layer.anchorPoint = CGPoint(x: 0, y: 0.5)
         label.transform = CGAffineTransformRotate(label.transform, midAngle)
-//        label.transform = CGAffineTransformMakeRotation(midAngle)
         addSubview(label)
         
     }
@@ -107,8 +108,12 @@ class AromaWheelView: UIView {
     override func drawRect(rect: CGRect){
         for (index, aroma) in aromas.enumerate() {
             aroma.path = wedgeInCircleCenteredAtPoint(wheelCenter, withRadius:wheelRadius, numberOfSections: numberOfAromas, thisSectionNumber: index+1)
-            (aroma.color ?? colorLevels[2]).setStroke()
+            (aroma.color ?? colorLevels[2]).setFill()
+            UIColor.whiteColor().setStroke()
+            aroma.path?.lineWidth = 5.0
+            aroma.path?.fill()
             aroma.path?.stroke()
+            
             addLabelToWedge(wheelCenter, withRadius: wheelRadius, numberOfSections: numberOfAromas, thisSectionNumber: index+1, labelText : aroma.aromaDescription)
             aroma.color = UIColor.blueColor()
         }

@@ -15,31 +15,37 @@ class TagCollectionViewController: UICollectionViewController {
     var aromaType : AromaType?
     var tags : [Aroma] = [] {
         didSet {
-            print(tags.description)
             collectionView?.reloadData()
         }
     }
 
-    
     let center = NSNotificationCenter.defaultCenter()
+//    var layout : UICollectionViewFlowLayout?
     
     private var addObserver : AnyObject?
     private var removeObserver : AnyObject?
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        // add a reference to the flow layout
+        if let layout = collectionView?.collectionViewLayout as? UICollectionViewFlowLayout {
+            layout.estimatedItemSize = CGSize(width: 100, height: 40)   // A few  magic numbers to init autolayout
+        }
+        
+        // Add blur visual efffect
+        let visualEffectView = UIVisualEffectView(effect: UIBlurEffect(style: .ExtraLight))
+        visualEffectView.frame = view.bounds
+        visualEffectView.autoresizingMask = [.FlexibleWidth, .FlexibleHeight]
+        view.insertSubview(visualEffectView, atIndex: 0)
 
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-
+        // Add observers for "add aroma" and "rmove aroma"
         addObserver = center.addObserverForName("AddAroma",
             object: nil, //UIApplication.sharedApplication(),
             queue: NSOperationQueue.mainQueue())
             { [weak weakSelf = self] notification in
             if let aroma = notification.userInfo?["addedAroma"] as? Aroma {
                 if let hasAroma = weakSelf?.tags.contains(aroma) where !hasAroma {
-//                if find(self.tags, aroma) == nil {
-
                     weakSelf?.tags.append(aroma)
                 }
             }
@@ -68,6 +74,10 @@ class TagCollectionViewController: UICollectionViewController {
             removeObserver = nil
         }
     }
+    override func viewDidAppear(animated: Bool) {
+        super.viewDidAppear(animated)
+        collectionView?.flashScrollIndicators()
+    }
 
     /*
     // MARK: - Navigation
@@ -93,6 +103,8 @@ class TagCollectionViewController: UICollectionViewController {
     override func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
         if let cell = collectionView.dequeueReusableCellWithReuseIdentifier(reuseIdentifier, forIndexPath: indexPath) as? TagCollectionViewCell {
             cell.aroma = tags[indexPath.row]
+            cell.layer.cornerRadius = 10.0
+            cell.layer.masksToBounds = true
             return cell
         }
         return UICollectionViewCell()

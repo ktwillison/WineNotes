@@ -30,5 +30,4 @@ class TagCollectionViewCell: UICollectionViewCell {
             NSNotificationCenter.defaultCenter().postNotification(notification)
         }
     }
-    
 }
