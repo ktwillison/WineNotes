@@ -26,15 +26,8 @@ class AromaViewController: UIViewController {
             tagView.tags = initializeWithTags
             tagView.aromaType = aromaType
         }
-        
-        
-        
-//        aromaView.sendSubviewToBack(aromaView.)
-        
-//        aromaView.backgroundColor = UIColor.redColor()
-//        aromaView.aromaWheelView.backgroundColor = UIColor.redColor()
     }
-
+    
     // MARK: - Navigation
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation

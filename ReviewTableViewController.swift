@@ -144,6 +144,15 @@ class ReviewTableViewController: UITableViewController, UIPopoverPresentationCon
     @IBAction func submitReview(sender: UIBarButtonItem) {
         review.updateFromCellDictionary(cellDictionary: cellDictionary)
         addReviewToDatabase(review)
+        
+        // Send a notification (for e.g. peer connectivity)
+        let notification = NSNotification(
+            name: "AddReview",
+            object: self,
+            userInfo: ["addedReview" : review]
+        )
+        NSNotificationCenter.defaultCenter().postNotification(notification)
+
     }
     
     // MARK: - Table view data source

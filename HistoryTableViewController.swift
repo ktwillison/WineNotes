@@ -33,15 +33,8 @@ class HistoryTableViewController: UITableViewController, UISearchResultsUpdating
     override func viewDidLoad() {
         super.viewDidLoad()
         
-//        setManagedObjectContext()
         if AppData.managedObjectContext == nil {AppData.setManagedObjectContext() }
         configureSearchController()
-        
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem()
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -76,11 +69,10 @@ class HistoryTableViewController: UITableViewController, UISearchResultsUpdating
     // MARK: - Search
     
     // Set up the search bar
-    func configureSearchController() {
+    private func configureSearchController() {
         searchController = UISearchController(searchResultsController: nil)
         searchController.searchResultsUpdater = self
         searchController.searchBar.delegate = self
-        //        searchController.dimsBackgroundDuringPresentation = true
         searchController.searchBar.placeholder = "Search your past reviews"
         searchController.searchBar.sizeToFit()
         tableView.tableHeaderView = searchController.searchBar
@@ -135,31 +127,6 @@ class HistoryTableViewController: UITableViewController, UISearchResultsUpdating
         tableView.reloadData()
     }
 
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
-    
-    // MARK: - Core Data
-    
-//    var managedObjectContext: NSManagedObjectContext?
-//    
-//    // Sets (or re-tries setting) managed object context
-//    func setManagedObjectContext() {
-//        AppDelegate.currentAppDelegate?.getContext { [weak weakSelf = self] (context, success) in
-//            if success {
-//                weakSelf?.managedObjectContext = context
-//            } else {
-//                // This may cause an endless loop.. but shouldn't as long as document state isn't whack
-//                weakSelf?.setManagedObjectContext()
-//            }
-//        }
-//    }
     
     // MARK: - Social
     

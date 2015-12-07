@@ -28,10 +28,10 @@ class TagCollectionViewController: UICollectionViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // add a reference to the flow layout
-        if let layout = collectionView?.collectionViewLayout as? UICollectionViewFlowLayout {
-            layout.estimatedItemSize = CGSize(width: 100, height: 40)   // A few  magic numbers to init autolayout
-        }
+        // prompt layout to autolayout
+//        if let layout = collectionViewLayout as? UICollectionViewFlowLayout {
+//            layout.estimatedItemSize = CGSize(width: 100, height: 40)   // A few  magic numbers to init autolayout
+//        }
         
         // Add blur visual efffect
         let visualEffectView = UIVisualEffectView(effect: UIBlurEffect(style: .ExtraLight))
@@ -39,7 +39,7 @@ class TagCollectionViewController: UICollectionViewController {
         visualEffectView.autoresizingMask = [.FlexibleWidth, .FlexibleHeight]
         view.insertSubview(visualEffectView, atIndex: 0)
 
-        // Add observers for "add aroma" and "rmove aroma"
+        // Add observers for "add aroma" and "remove aroma"
         addObserver = center.addObserverForName("AddAroma",
             object: nil, //UIApplication.sharedApplication(),
             queue: NSOperationQueue.mainQueue())

@@ -15,6 +15,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
     var document: UIManagedDocument?
     var documentURL: NSURL?
+    var peerConnectionManager : PeerConnectionManager?
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         // Set up appData UIManagedDocument
@@ -23,6 +24,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             documentURL = docsDir.URLByAppendingPathComponent("WineNotes")
             document = UIManagedDocument(fileURL: documentURL!)
         }
+        
+        // Set up peer connection manager
+        peerConnectionManager = PeerConnectionManager()
+        
         return true
     }
 
