@@ -113,7 +113,7 @@ class ReviewTableViewController: UITableViewController, UIPopoverPresentationCon
     private func getCellForTag(tag : Int) -> RatingCell? {
         var tagNumber = tag
         for s in cellList {
-            if tagNumber > s.count {
+            if tagNumber >= s.count {
                 tagNumber = tagNumber - s.count
             } else {
                 return s[tagNumber]
@@ -126,23 +126,13 @@ class ReviewTableViewController: UITableViewController, UIPopoverPresentationCon
         super.viewDidLoad()
 
         tableView.rowHeight = UITableViewAutomaticDimension
-        tableView.sectionHeaderHeight = UITableViewAutomaticDimension
+        tableView.sectionHeaderHeight = 100
         tableView.estimatedRowHeight = 160.0
-        tableView.estimatedSectionHeaderHeight = 90
-        
-//        tableView.registerClass(ReviewHeaderFooterView.self, forHeaderFooterViewReuseIdentifier: CellType.header)
-        
         title = "Wine Notes"
         
         // Set up core image properties
         coreImageContext = CIContext(options:nil)
         coreImageFilter = CIFilter(name: "CIPhotoEffectChrome")
-        
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem()
     }
     
     // MARK: - Table view data source
@@ -194,7 +184,7 @@ class ReviewTableViewController: UITableViewController, UIPopoverPresentationCon
             cell.controllerDelegate = self
             textCellIndexPath = indexPath
             cell.titleLabel?.text = cellInfo.title
-            cell.nameTextField.text = review.name ?? ""
+            cell.nameTextField.text = cellInfo.textValue ?? ""
             textField = cell.nameTextField
             
         } else if let cell = cell as? ImagePickerTableViewCell {
@@ -202,71 +192,27 @@ class ReviewTableViewController: UITableViewController, UIPopoverPresentationCon
             
         } else if let cell = cell as? ImageTableViewCell {
             cell.imageView?.image = review.image
-//            cell.imageView?.frame.origin = CGPoint(x: 0, y: 0)
             imageIndex = indexPath
         }
 
         return cell
     }
     
-    let headerFooterView = ReviewHeaderFooterView()
-    let headerViewHeight : CGFloat = 90
-    let headerLabelViewHeight : CGFloat = 20
-    let headerImageLabelMargin : CGFloat = 6
-    
     override func tableView(tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        
-        let headerView = UIView(frame: CGRectMake(0, 0, tableView.frame.size.width, headerViewHeight))
-        
-        let headerImageHeight = headerViewHeight-headerLabelViewHeight-headerImageLabelMargin
-        let imageView = UIImageView(frame: CGRectMake(0, 0, headerImageHeight, headerImageHeight))
-        imageView.image = headings[section].image
-        
-        let label = UILabel(frame: CGRectMake(0, 0, tableView.frame.size.width, headerLabelViewHeight))
-        label.text = headings[section].title
-        label.font = UIFont.systemFontOfSize(16, weight: UIFontWeightUltraLight)
-        label.textAlignment = .Center
-        
-//        headerView.backgroundColor =  UIColor.whiteColor()
-        headerView.addSubview(imageView)
-        headerView.addSubview(label)
-        
-        let centerImage = NSLayoutConstraint(item: imageView, attribute: NSLayoutAttribute.CenterX, relatedBy: NSLayoutRelation.Equal, toItem: headerView, attribute: NSLayoutAttribute.CenterX, multiplier: 1, constant: 0)
-        let alignment = NSLayoutConstraint(item: imageView, attribute: NSLayoutAttribute.Bottom, relatedBy: NSLayoutRelation.Equal, toItem: label, attribute: NSLayoutAttribute.Top, multiplier: 1, constant: headerImageLabelMargin)
-        
-        headerView.addConstraint(alignment)
-        headerView.addConstraint(centerImage)
-        
-        return headerView
-        
-//        
-//        if let  headerCell = tableView.dequeueReusableHeaderFooterViewWithIdentifier(CellType.header) as? ReviewHeaderFooterView {
-//            headerFooterView.cellImage.image = headings[section].image
-//            headerFooterView.cellText.text = headings[section].title
-//            
-//            // View-wrapping to fix the error listed in this thread:
-//            // http://stackoverflow.com/questions/12772197/what-is-the-meaning-of-the-no-index-path-for-table-cell-being-reused-message-i
-//            //
-//            //        let cellView = UIView(frame: CGRect(origin: CGPoint(x: 0,y: 0) , size: CGSize(width: tableView.frame.width, height: headerCell.frame.height)))
-//            //        cellView.addSubview(headerCell)
-//            return headerFooterView
-//        }
-//        
-//        return nil
+        if let  headerCell = tableView.dequeueReusableCellWithIdentifier(CellType.header) as? ReviewHeaderTableViewCell {
+            headerCell.cellImage.image = headings[section].image
+            headerCell.cellText.text = headings[section].title
+            return headerCell.contentView // Otherwise we get "No cell for indexPath" errors
+        }
+        return nil
     }
     
-//    override func tableView(tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-//        if section == 0 {
-//            return 60
-//        }
-//        return 90
-//    }
-    
-    
-//    override func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-//        return headings[section]
-//    }
-    
+    override func tableView(tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        // Custom header still produces 'Unable to simultaneously satisfy constraints' errors, 
+        // but it seems like this is a known issue (with no tidy workaround): 
+        // https://github.com/daveanderson/TableViewHeader
+        return 100
+    }
     
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         
@@ -523,12 +469,12 @@ class ReviewTableViewController: UITableViewController, UIPopoverPresentationCon
 }
 
 class RatingCell {
-    init(cellTitle : String, cellType : String, sliderStyle style : SliderStyle = SliderStyle.None, pickerValues pickerVals : [String] = [], infoText info : String = "") {
+    init(cellTitle : String, cellType : String, sliderStyle style : SliderStyle = SliderStyle.None, pickerValues pickerVals : [String] = [], infoText info : String? = nil) {
         title = cellTitle
         identifier = cellType
         sliderStyle = style
         pickerValues = pickerVals
-        infoText = info
+        infoText = info ?? "A good dscription of \(cellTitle) is coming in version 2!"
     }
     
     let identifier : String!
