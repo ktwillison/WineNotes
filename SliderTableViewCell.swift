@@ -12,6 +12,7 @@ enum SliderStyle {
     case LowMedHigh
     case RimWidth
     case Openness
+    case Rating
     case Numeric
     case None
 }
@@ -29,6 +30,8 @@ class SliderTableViewCell: UITableViewCell {
                     stopPoints = ["Low", "Medium -", "Medium", "Medium +", "High"]
                 case .Openness:
                     stopPoints = ["Very closed", "Closed", "Neither", "Open", "Very open"]
+                case .Rating:
+                    stopPoints = ["1", "2", "3", "4", "5"]
                 default :
                     stopPoints = nil
                 }

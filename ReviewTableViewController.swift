@@ -13,7 +13,7 @@ import CoreLocation
 
 class ReviewTableViewController: UITableViewController, UIPopoverPresentationControllerDelegate, InfoTextPresentationDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITextFieldDelegate, CLLocationManagerDelegate {
     
-    let review = Review()
+    var review = Review()
     var selectedIndexPath : NSIndexPath?
     var coreLocationManager = CLLocationManager()
     var coreImageContext: CIContext!
@@ -29,12 +29,14 @@ class ReviewTableViewController: UITableViewController, UIPopoverPresentationCon
         static let imagePicker = "ImagePickerCell"
         static let image = "ImageCell"
         static let text = "TextCell"
+        static let header = "HeaderCell"
     }
     
     // Keep track of segue identifiers for each cell type
     struct SegueType {
         static let showAromaWheel = "ShowAromaWheel"
         static let showInfoText = "ShowInfoText"
+        static let showHistory = "ShowHistory"
     }
     
     
@@ -59,7 +61,7 @@ class ReviewTableViewController: UITableViewController, UIPopoverPresentationCon
         ReviewKeys.ResidualSugar : RatingCell(cellTitle: "Residual Sugar", cellType: CellType.slider, sliderStyle: .Numeric),
         
         // General
-        ReviewKeys.Rating : RatingCell(cellTitle: "Rating", cellType: CellType.slider, sliderStyle: .Numeric),
+        ReviewKeys.Rating : RatingCell(cellTitle: "Rating", cellType: CellType.slider, sliderStyle: .Rating),
         ReviewKeys.Varietal : RatingCell(cellTitle: "Varietal", cellType: CellType.selection, pickerValues: AppData.varietals),
         ReviewKeys.Country : RatingCell(cellTitle: "Country", cellType: CellType.selection, pickerValues: AppData.countries()),
         ReviewKeys.Region : RatingCell(cellTitle: "Region", cellType: CellType.selection, pickerValues: []),
@@ -80,8 +82,13 @@ class ReviewTableViewController: UITableViewController, UIPopoverPresentationCon
     
     
     // Create a list to determine the order of the cells, retrieving elements from the dictionary
-    private let headings = ["Eyes", "Nose", "Mouth", "General"]
+    private let headings : [(title: String, image: UIImage?)] = [("General", UIImage(named: "text.png")), ("Eyes", UIImage(named: "eye2.png")), ("Nose", UIImage(named: "nose.png")), ("Mouth", UIImage(named: "mouth.png"))]
+    
     private lazy var cellList : [[RatingCell]] = [
+        // General
+        [self.cellDictionary[ReviewKeys.Name]!, self.cellDictionary[ReviewKeys.Varietal]!, self.cellDictionary[ReviewKeys.Country]!, self.cellDictionary[ReviewKeys.Region]!, self.cellDictionary[ReviewKeys.Rating]!,
+            self.cellDictionary[ReviewKeys.ImagePicker]!, self.cellDictionary[ReviewKeys.Image]!
+        ],
         // Eyes
 //        [self.cellDictionary["Color"]!,
         [self.cellDictionary[ReviewKeys.Opacity]!, self.cellDictionary[ReviewKeys.Rim]!, self.cellDictionary[ReviewKeys.Spritz]!],
@@ -90,12 +97,7 @@ class ReviewTableViewController: UITableViewController, UIPopoverPresentationCon
         [self.cellDictionary[ReviewKeys.NoseAroma]!, self.cellDictionary[ReviewKeys.Openness]!],
         
         // Mouth
-        [self.cellDictionary[ReviewKeys.MouthAroma]!, self.cellDictionary[ReviewKeys.Body]!, self.cellDictionary[ReviewKeys.Acidity]!, self.cellDictionary[ReviewKeys.Alcohol]!, self.cellDictionary[ReviewKeys.Tannins]!, self.cellDictionary[ReviewKeys.ResidualSugar]!],
-        
-        // General
-        [self.cellDictionary[ReviewKeys.Rating]!, self.cellDictionary[ReviewKeys.Varietal]!, self.cellDictionary[ReviewKeys.Country]!, self.cellDictionary[ReviewKeys.Region]!, self.cellDictionary[ReviewKeys.ImagePicker]!, self.cellDictionary[ReviewKeys.Image]!,
-            self.cellDictionary[ReviewKeys.Name]!
-        ]
+        [self.cellDictionary[ReviewKeys.MouthAroma]!, self.cellDictionary[ReviewKeys.Body]!, self.cellDictionary[ReviewKeys.Acidity]!, self.cellDictionary[ReviewKeys.Alcohol]!, self.cellDictionary[ReviewKeys.Tannins]!, self.cellDictionary[ReviewKeys.ResidualSugar]!]
     ]
     
     private func getCellTag(indexPath : NSIndexPath) -> Int {
@@ -122,12 +124,10 @@ class ReviewTableViewController: UITableViewController, UIPopoverPresentationCon
         super.viewDidLoad()
 
         tableView.rowHeight = UITableViewAutomaticDimension
+        tableView.sectionHeaderHeight = UITableViewAutomaticDimension
         tableView.estimatedRowHeight = 160.0
+        tableView.estimatedSectionHeaderHeight = 90
         title = "Wine Notes"
-        
-        // Set managedObjectContext
-//        setManagedObjectContext()
-        if AppData.managedObjectContext == nil {AppData.setManagedObjectContext() }
         
         // Set up core image properties
         coreImageContext = CIContext(options:nil)
@@ -138,28 +138,6 @@ class ReviewTableViewController: UITableViewController, UIPopoverPresentationCon
 
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         // self.navigationItem.rightBarButtonItem = self.editButtonItem()
-    }
-
-    // Update review object and store it in the database
-    @IBAction func submitReview(sender: UIBarButtonItem) {
-        review.updateFromCellDictionary(cellDictionary: cellDictionary)
-        addReviewToDatabase(review)
-        
-        // Send the review over with the compressed image
-        let reviewToSend = review
-        if review.image != nil,
-            let imageData = UIImageJPEGRepresentation(review.image!, 0.2) {
-                reviewToSend.image = UIImage(data: imageData)
-        }
-        
-        // Send a notification (for e.g. peer connectivity)
-        let notification = NSNotification(
-            name: "AddReview",
-            object: self,
-            userInfo: ["addedReview" : reviewToSend]
-        )
-        NSNotificationCenter.defaultCenter().postNotification(notification)
-
     }
     
     // MARK: - Table view data source
@@ -198,7 +176,7 @@ class ReviewTableViewController: UITableViewController, UIPopoverPresentationCon
         } else if let cell = cell as? AromaTableViewCell {
             cell.titleLabel?.text = cellInfo.title
             aromaIndecies.insert(indexPath)
-            if headings[indexPath.section] == "Mouth" {
+            if headings[indexPath.section].title == "Mouth" {
                 cell.aromaType = AromaType.Mouth
                 cell.aromas = review.mouth.aromas ?? []
             } else {
@@ -210,24 +188,50 @@ class ReviewTableViewController: UITableViewController, UIPopoverPresentationCon
             cell.connectedCell = cellInfo
             cell.controllerDelegate = self
             cell.titleLabel?.text = cellInfo.title
+            cell.nameTextField.text = review.name ?? ""
             
         } else if let cell = cell as? ImagePickerTableViewCell {
             cell.controllerDelegate = self
             
         } else if let cell = cell as? ImageTableViewCell {
             cell.imageView?.image = review.image
+//            cell.imageView?.frame.origin = CGPoint(x: 0, y: 0)
             imageIndex = indexPath
         }
 
         return cell
     }
     
-    override func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        return headings[section]
+    override func tableView(tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let  headerCell = tableView.dequeueReusableCellWithIdentifier(CellType.header) as! ReviewHeaderTableViewCell
+        headerCell.cellImage.image = headings[section].image
+        headerCell.cellText.text = headings[section].title
+        
+        // View-wrapping to fix the error listed in this thread:
+        // http://stackoverflow.com/questions/12772197/what-is-the-meaning-of-the-no-index-path-for-table-cell-being-reused-message-i
+        
+        let cellView = UIView(frame: CGRect(origin: CGPoint(x: 0,y: 0) , size: CGSize(width: tableView.frame.width, height: headerCell.frame.height)))
+        cellView.addSubview(headerCell)
+        
+        return headerCell
     }
+    
+//    override func tableView(tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+//        if section == 0 {
+//            return 60
+//        }
+//        return 90
+//    }
+    
+    
+//    override func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+//        return headings[section]
+//    }
     
     
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        
+        
         
         let previouslySelectedIndexPath = selectedIndexPath
         selectedIndexPath = indexPath
@@ -256,7 +260,7 @@ class ReviewTableViewController: UITableViewController, UIPopoverPresentationCon
         case CellType.image:
             if let reviewImage = review.image {
                 let aspectRatio = CGFloat(reviewImage.size.width / reviewImage.size.height)
-                let width = tableView.frame.size.width
+                let width = tableView.contentSize.width
                 let height = width / aspectRatio
                 return height
             }
@@ -367,8 +371,10 @@ class ReviewTableViewController: UITableViewController, UIPopoverPresentationCon
     
     //MARK: - Image picker
     func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : AnyObject]) {
+        
         review.image = (info[UIImagePickerControllerEditedImage] ?? info[UIImagePickerControllerOriginalImage]) as? UIImage
         applyFilterToImage()
+        
         if imageIndex != nil {
             tableView.reloadRowsAtIndexPaths([imageIndex!], withRowAnimation: .Bottom)
         }
@@ -382,13 +388,23 @@ class ReviewTableViewController: UITableViewController, UIPopoverPresentationCon
             let image = CIImage(image: review.image!)
             coreImageFilter.setValue(image, forKey: kCIInputImageKey)
             if let outputImage : CIImage = coreImageFilter.outputImage {
-                let cgimg = coreImageContext.createCGImage(outputImage, fromRect: outputImage.extent)
+                var cgimg = coreImageContext.createCGImage(outputImage, fromRect: outputImage.extent)
+                
+                // ensure that image is square
+                if review.image!.size.width != review.image!.size.height {
+                    let newSize = min(review.image!.size.width, review.image!.size.height)
+                    let imgCenter = CGPoint(x: review.image!.size.width/2, y: review.image!.size.height/2)
+                    let newImageOrigin = CGPoint(x: imgCenter.x - newSize/2 , y: imgCenter.y - newSize/2)
+                    let cropRect = CGRect(origin: newImageOrigin, size: CGSize(width: newSize, height: newSize))
+                    cgimg = CGImageCreateWithImageInRect(cgimg, cropRect) ?? cgimg
+                }
+                
                 review.image = UIImage(CGImage: cgimg)
             }
         }
     }
     
-    private func saveImageToReview() {
+    private func setURLForReviewImage(review : Review) {
         if review.image != nil {
             if let imageData = UIImageJPEGRepresentation(review.image!, 1.0),
                 let documentsDirectory = NSFileManager().URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask).first {
@@ -406,8 +422,33 @@ class ReviewTableViewController: UITableViewController, UIPopoverPresentationCon
     }
     
     
+    // Update review object and store it in the database
+    @IBAction func submitReview(sender: UIBarButtonItem) {
+        review.updateFromCellDictionary(cellDictionary: cellDictionary)
+        addReviewToDatabase(review)
+        
+        // Send the review over with the compressed image
+        let reviewToSend = review
+        if review.image != nil,
+            let imageData = UIImageJPEGRepresentation(review.image!, 0.2) {
+                reviewToSend.image = UIImage(data: imageData)
+        }
+        
+        // Send a notification (for e.g. peer connectivity)
+        let notification = NSNotification(
+            name: "AddReview",
+            object: self,
+            userInfo: ["addedReview" : reviewToSend]
+        )
+        NSNotificationCenter.defaultCenter().postNotification(notification)
+        
+        review = Review()
+        if let tabBar = self.tabBarController {
+            tabBar.selectedIndex = 0
+        }
+    }
+    
     //MARK: - Core Data
-//    var managedObjectContext: NSManagedObjectContext?
     
     private func addReviewToDatabase(newReview: Review){
         
@@ -415,7 +456,7 @@ class ReviewTableViewController: UITableViewController, UIPopoverPresentationCon
         AppData.managedObjectContext!.performBlock {
             
             // Save a persistant copy of the image
-            self.saveImageToReview()
+            self.setURLForReviewImage(newReview)
             
             // Put review into database
             WineReview.wineReviewFromReview(newReview, inManagedObjectContext: AppData.managedObjectContext!)
@@ -438,17 +479,6 @@ class ReviewTableViewController: UITableViewController, UIPopoverPresentationCon
         }
     }
     
-//    // Sets (or re-tries setting) managed object context
-//    func setManagedObjectContext() {
-//        AppDelegate.currentAppDelegate?.getContext { [weak weakSelf = self] (context, success) in
-//            if success {
-//                weakSelf?.managedObjectContext = context
-//            } else {
-//                // This may cause an endless loop.. but shouldn't as long as document state isn't whack
-//                weakSelf?.setManagedObjectContext()
-//            }
-//        }
-//    }
 }
 
 class RatingCell {

@@ -11,7 +11,7 @@ import MultipeerConnectivity
 
 let reuseIdentifier = "ReviewCell"
 
-class PeerCollectionViewController: UICollectionViewController, MCBrowserViewControllerDelegate {
+class PeerCollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout, MCBrowserViewControllerDelegate {
     
     var browserVC : MCBrowserViewController!
     
@@ -58,6 +58,11 @@ class PeerCollectionViewController: UICollectionViewController, MCBrowserViewCon
             NSNotificationCenter.defaultCenter().removeObserver(receivedReviewObserver!)
             receivedReviewObserver = nil
         }
+    }
+    
+    // Somehow invalidateLayout only works if I implement it here?
+    override func willRotateToInterfaceOrientation(toInterfaceOrientation: UIInterfaceOrientation, duration: NSTimeInterval) {
+        collectionViewLayout.invalidateLayout()
     }
 
     
@@ -110,11 +115,19 @@ class PeerCollectionViewController: UICollectionViewController, MCBrowserViewCon
             cell.cellLabel.text = receivedReviews[indexPath.row].name ?? "Untitled Wine"
             cell.cellVarietal.text = receivedReviews[indexPath.row].varietal ?? " "
             if let rating = receivedReviews[indexPath.row].rating {
-                cell.cellRating.text = String(rating)
+                cell.cellRating.text = String(round(rating + 1))
             } else {
                 cell.cellRating.text = " "
             }
+            
             cell.cellImage.image = receivedReviews[indexPath.row].image
+            if cell.cellImage.image != nil {
+                let aspectRatio = cell.cellImage.image!.size.height / cell.cellImage.image!.size.width
+                let photoHeight = aspectRatio * photoWidth
+//                let photoOrigin = CGPoint(x: cell.layoutMarginsGuide.leftAnchor. , y: cellHeight - photoHeight)
+                let photoOrigin = CGPoint(x: 0 , y: cellHeight - photoHeight)
+                cell.cellImage.frame = CGRect(origin: photoOrigin, size: CGSize(width: photoWidth, height: photoHeight))
+            }
         }
     
         return cell
@@ -122,6 +135,33 @@ class PeerCollectionViewController: UICollectionViewController, MCBrowserViewCon
 
     // MARK: UICollectionViewDelegate
 
+//    private let sectionInsets = UIEdgeInsets(top: 50.0, left: 20.0, bottom: 50.0, right: 20.0)
+    private var cellWidth : CGFloat {
+        get{ return 250 } //(collectionView?.frame.width ?? 230) * 0.7 }
+    }
+    
+    private var cellHeight : CGFloat {
+        get{ return (collectionView?.frame.height ?? 375) * 0.6 }
+    }
+    
+    private var photoWidth : CGFloat {
+        get { return cellWidth }
+    }
+    
+    func collectionView(collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
+            return CGSize(width: cellWidth, height: cellHeight)
+    }
+    
+   
+//    func collectionView(collectionView: UICollectionView,
+//        layout collectionViewLayout: UICollectionViewLayout,
+//        insetForSectionAtIndex section: Int) -> UIEdgeInsets {
+//            return sectionInsets
+//    }
+
+    
     /*
     // Uncomment this method to specify if the specified item should be highlighted during tracking
     override func collectionView(collectionView: UICollectionView, shouldHighlightItemAtIndexPath indexPath: NSIndexPath) -> Bool {

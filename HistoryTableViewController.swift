@@ -17,7 +17,7 @@ class HistoryTableViewController: UITableViewController, UISearchResultsUpdating
     private var userIsSearching : Bool = false
     var searchController: UISearchController!
     
-    private var reviews : [WineReview]?
+    private var reviews : [WineReview]? {didSet { tableView.reloadData() }}
     private var filteredReviews : [WineReview]?
     private var dataSource : [WineReview]? {
         get {
@@ -30,17 +30,30 @@ class HistoryTableViewController: UITableViewController, UISearchResultsUpdating
         }
     }
     
+    var contextObserver : AnyObject?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        if AppData.managedObjectContext == nil {AppData.setManagedObjectContext() }
         configureSearchController()
+
+        contextObserver = NSNotificationCenter.defaultCenter().addObserverForName("ManagedObjectContextSet",
+            object: nil,
+            queue: NSOperationQueue.mainQueue())
+            { [weak weakSelf = self] notification in
+                weakSelf?.reviews = WineReview.getRecentReviews(withinHours: 6, context: AppData.managedObjectContext!)
+                NSNotificationCenter.defaultCenter().removeObserver(weakSelf!.contextObserver!)
+                weakSelf?.contextObserver = nil
+        }
+        
+        AppData.setManagedObjectContext()
+//        reviews = WineReview.getRecentReviews(withinHours: 6, context: AppData.managedObjectContext!)
     }
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
-        reviews = WineReview.getReviews(inManagedObjectContext: AppData.managedObjectContext!)
-        tableView.reloadData()
+        if let context = AppData.managedObjectContext {
+            reviews = WineReview.getRecentReviews(withinHours: 6, context: context)
+        }
     }
     
     // MARK: - Table view data source

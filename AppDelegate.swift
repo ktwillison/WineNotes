@@ -5,6 +5,10 @@
 //  Created by Katie Willison on 11/19/15.
 //  Copyright © 2015 Kate Willison. All rights reserved.
 //
+// All icons Creative Commons BY 3.0
+// Facebook icon by Linh Pham http://linhpham.me/miu
+// All other icons by Robin Kylander at http://www.flaticon.com/packs/rounded-ui
+
 
 import UIKit
 import CoreData
@@ -73,9 +77,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                         self.document!.openWithCompletionHandler { (success: Bool) in handler(self.document!.managedObjectContext, success: success) }
                     }
                     
-                    // Otherwise open document and execute handler
+                // Otherwise open document and execute handler
                 } else {
-                    document!.openWithCompletionHandler { (success: Bool) in handler(self.document!.managedObjectContext, success: success) }
+                    document!.openWithCompletionHandler { (success: Bool) in handler (self.document!.managedObjectContext, success: success) }
                 }
                 
                 // Pass success = false back to handler if some other state

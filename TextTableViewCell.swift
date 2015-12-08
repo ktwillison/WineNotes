@@ -10,6 +10,7 @@ import UIKit
 
 class TextTableViewCell: UITableViewCell, UITextFieldDelegate {
     
+    
     var connectedCell : RatingCell? {
         didSet {
             nameTextField?.text = connectedCell?.textValue ?? ""
@@ -22,6 +23,7 @@ class TextTableViewCell: UITableViewCell, UITextFieldDelegate {
     @IBOutlet weak var nameTextField: UITextField! {
         didSet {
             nameTextField.delegate = self //controllerDelegate
+            nameTextField.addTarget(self, action: "updateTextValue", forControlEvents: .EditingChanged)
         }
     }
     
@@ -31,6 +33,10 @@ class TextTableViewCell: UITableViewCell, UITextFieldDelegate {
             connectedCell?.textValue = textField.text
         }
         return true
+    }
+    
+    func updateTextValue(){
+        connectedCell?.textValue = nameTextField.text
     }
     
 }
