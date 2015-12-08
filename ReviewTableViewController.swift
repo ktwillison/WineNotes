@@ -129,6 +129,9 @@ class ReviewTableViewController: UITableViewController, UIPopoverPresentationCon
         tableView.sectionHeaderHeight = UITableViewAutomaticDimension
         tableView.estimatedRowHeight = 160.0
         tableView.estimatedSectionHeaderHeight = 90
+        
+//        tableView.registerClass(ReviewHeaderFooterView.self, forHeaderFooterViewReuseIdentifier: CellType.header)
+        
         title = "Wine Notes"
         
         // Set up core image properties
@@ -206,18 +209,50 @@ class ReviewTableViewController: UITableViewController, UIPopoverPresentationCon
         return cell
     }
     
+    let headerFooterView = ReviewHeaderFooterView()
+    let headerViewHeight : CGFloat = 90
+    let headerLabelViewHeight : CGFloat = 20
+    let headerImageLabelMargin : CGFloat = 6
+    
     override func tableView(tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let  headerCell = tableView.dequeueReusableCellWithIdentifier(CellType.header) as! ReviewHeaderTableViewCell
-        headerCell.cellImage.image = headings[section].image
-        headerCell.cellText.text = headings[section].title
         
-        // View-wrapping to fix the error listed in this thread:
-        // http://stackoverflow.com/questions/12772197/what-is-the-meaning-of-the-no-index-path-for-table-cell-being-reused-message-i
+        let headerView = UIView(frame: CGRectMake(0, 0, tableView.frame.size.width, headerViewHeight))
         
-        let cellView = UIView(frame: CGRect(origin: CGPoint(x: 0,y: 0) , size: CGSize(width: tableView.frame.width, height: headerCell.frame.height)))
-        cellView.addSubview(headerCell)
+        let headerImageHeight = headerViewHeight-headerLabelViewHeight-headerImageLabelMargin
+        let imageView = UIImageView(frame: CGRectMake(0, 0, headerImageHeight, headerImageHeight))
+        imageView.image = headings[section].image
         
-        return headerCell
+        let label = UILabel(frame: CGRectMake(0, 0, tableView.frame.size.width, headerLabelViewHeight))
+        label.text = headings[section].title
+        label.font = UIFont.systemFontOfSize(16, weight: UIFontWeightUltraLight)
+        label.textAlignment = .Center
+        
+//        headerView.backgroundColor =  UIColor.whiteColor()
+        headerView.addSubview(imageView)
+        headerView.addSubview(label)
+        
+        let centerImage = NSLayoutConstraint(item: imageView, attribute: NSLayoutAttribute.CenterX, relatedBy: NSLayoutRelation.Equal, toItem: headerView, attribute: NSLayoutAttribute.CenterX, multiplier: 1, constant: 0)
+        let alignment = NSLayoutConstraint(item: imageView, attribute: NSLayoutAttribute.Bottom, relatedBy: NSLayoutRelation.Equal, toItem: label, attribute: NSLayoutAttribute.Top, multiplier: 1, constant: headerImageLabelMargin)
+        
+        headerView.addConstraint(alignment)
+        headerView.addConstraint(centerImage)
+        
+        return headerView
+        
+//        
+//        if let  headerCell = tableView.dequeueReusableHeaderFooterViewWithIdentifier(CellType.header) as? ReviewHeaderFooterView {
+//            headerFooterView.cellImage.image = headings[section].image
+//            headerFooterView.cellText.text = headings[section].title
+//            
+//            // View-wrapping to fix the error listed in this thread:
+//            // http://stackoverflow.com/questions/12772197/what-is-the-meaning-of-the-no-index-path-for-table-cell-being-reused-message-i
+//            //
+//            //        let cellView = UIView(frame: CGRect(origin: CGPoint(x: 0,y: 0) , size: CGSize(width: tableView.frame.width, height: headerCell.frame.height)))
+//            //        cellView.addSubview(headerCell)
+//            return headerFooterView
+//        }
+//        
+//        return nil
     }
     
 //    override func tableView(tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
