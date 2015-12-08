@@ -11,6 +11,7 @@ import UIKit
 class PickerTableViewCell: UITableViewCell, UIPickerViewDelegate, UIPickerViewDataSource {
 
     var connectedCell : RatingCell?
+    var parentTableView : ReviewTableViewController?
     
     @IBOutlet weak var titleLabel: UILabel!
     
@@ -23,8 +24,7 @@ class PickerTableViewCell: UITableViewCell, UIPickerViewDelegate, UIPickerViewDa
         }
     }
     
-    func pickerView(pickerView: UIPickerView,
-        titleForRow row: Int,
+    func pickerView(pickerView: UIPickerView, titleForRow row: Int,
         forComponent component: Int) -> String? {
         return connectedCell?.pickerValues[row]
     }
@@ -33,11 +33,12 @@ class PickerTableViewCell: UITableViewCell, UIPickerViewDelegate, UIPickerViewDa
         if row < connectedCell?.pickerValues.count {
             connectedCell?.value = Double(row)
             valueLabel.text = connectedCell?.pickerValues[row]
+            parentTableView?.updateRegionList()
+            parentTableView?.tableView?.reloadData()
         }
     }
     
-    func pickerView(pickerView: UIPickerView,
-        numberOfRowsInComponent component: Int) -> Int {
+    func pickerView(pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
             if component == 0 {
                 return connectedCell?.pickerValues.count ?? 0
             }
@@ -47,6 +48,7 @@ class PickerTableViewCell: UITableViewCell, UIPickerViewDelegate, UIPickerViewDa
     func numberOfComponentsInPickerView(pickerView: UIPickerView) -> Int {
         return 1
     }
+    
 //    
 //    override func awakeFromNib() {
 //        super.awakeFromNib()

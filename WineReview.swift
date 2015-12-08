@@ -35,6 +35,9 @@ class WineReview: NSManagedObject {
             let unique = String(NSDate.timeIntervalSinceReferenceDate()) + "_" + UIDevice.currentDevice().identifierForVendor!.UUIDString
             wineReview.id = unique
 
+            let notification = NSNotification(name: "ReviewAddedToDatabase", object: self, userInfo: nil)
+            NSNotificationCenter.defaultCenter().postNotification(notification)
+            
             return wineReview
         }
         return nil

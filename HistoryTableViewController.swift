@@ -31,6 +31,7 @@ class HistoryTableViewController: UITableViewController, UISearchResultsUpdating
     }
     
     var contextObserver : AnyObject?
+    var databaseObserver : AnyObject?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -44,9 +45,7 @@ class HistoryTableViewController: UITableViewController, UISearchResultsUpdating
                 NSNotificationCenter.defaultCenter().removeObserver(weakSelf!.contextObserver!)
                 weakSelf?.contextObserver = nil
         }
-        
         AppData.setManagedObjectContext()
-//        reviews = WineReview.getRecentReviews(withinHours: 6, context: AppData.managedObjectContext!)
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -54,6 +53,22 @@ class HistoryTableViewController: UITableViewController, UISearchResultsUpdating
         if let context = AppData.managedObjectContext {
             reviews = WineReview.getRecentReviews(withinHours: 6, context: context)
         }
+        
+        databaseObserver = NSNotificationCenter.defaultCenter().addObserverForName("ReviewAddedToDatabase",
+            object: nil,
+            queue: NSOperationQueue.mainQueue())
+            { [weak weakSelf = self] notification in
+                weakSelf?.reviews = WineReview.getRecentReviews(withinHours: 6, context: AppData.managedObjectContext!)
+                weakSelf?.tableView.reloadData()
+        }
+    }
+    
+    override func viewWillDisappear(animated: Bool) {
+        super.viewWillDisappear(animated)
+        if databaseObserver != nil {
+            NSNotificationCenter.defaultCenter().removeObserver(databaseObserver!)
+        }
+        databaseObserver = nil
     }
     
     // MARK: - Table view data source

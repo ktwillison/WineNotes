@@ -15,6 +15,8 @@ class ReviewTableViewController: UITableViewController, UIPopoverPresentationCon
     
     var review = Review()
     var selectedIndexPath : NSIndexPath?
+    var textField : UITextField?
+    var textCellIndexPath : NSIndexPath?
     var coreLocationManager = CLLocationManager()
     var coreImageContext: CIContext!
     var coreImageFilter: CIFilter!
@@ -163,6 +165,7 @@ class ReviewTableViewController: UITableViewController, UIPopoverPresentationCon
             
         } else if let cell = cell as? PickerTableViewCell {
             cell.connectedCell = cellInfo
+            cell.parentTableView = self
             cell.titleLabel?.text = cellInfo.title
             if let index = cellInfo.value {
                 cell.valueLabel?.text = cellInfo.pickerValues?[Int(index)]
@@ -171,7 +174,6 @@ class ReviewTableViewController: UITableViewController, UIPopoverPresentationCon
             }
             cell.picker.hidden = (indexPath != selectedIndexPath)
             if !cell.picker.hidden{ cell.picker.reloadAllComponents() }
-            updateRegionList()   /// NEED TO FIND A BETTER PLACE FOR THIS
             
         } else if let cell = cell as? AromaTableViewCell {
             cell.titleLabel?.text = cellInfo.title
@@ -187,8 +189,10 @@ class ReviewTableViewController: UITableViewController, UIPopoverPresentationCon
         } else if let cell = cell as? TextTableViewCell {
             cell.connectedCell = cellInfo
             cell.controllerDelegate = self
+            textCellIndexPath = indexPath
             cell.titleLabel?.text = cellInfo.title
             cell.nameTextField.text = review.name ?? ""
+            textField = cell.nameTextField
             
         } else if let cell = cell as? ImagePickerTableViewCell {
             cell.controllerDelegate = self
@@ -231,8 +235,6 @@ class ReviewTableViewController: UITableViewController, UIPopoverPresentationCon
     
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         
-        
-        
         let previouslySelectedIndexPath = selectedIndexPath
         selectedIndexPath = indexPath
         
@@ -244,6 +246,10 @@ class ReviewTableViewController: UITableViewController, UIPopoverPresentationCon
             
         } else if previouslySelectedIndexPath != nil {
             reloadIndexPaths.append(previouslySelectedIndexPath!)
+        }
+        
+        if indexPath != textCellIndexPath {
+            textField?.resignFirstResponder()
         }
         
         // Function call prompted by the following tutorial:
