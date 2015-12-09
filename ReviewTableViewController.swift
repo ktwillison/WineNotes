@@ -202,6 +202,7 @@ class ReviewTableViewController: UITableViewController, UIPopoverPresentationCon
         if let  headerCell = tableView.dequeueReusableCellWithIdentifier(CellType.header) as? ReviewHeaderTableViewCell {
             headerCell.cellImage.image = headings[section].image
             headerCell.cellText.text = headings[section].title
+            headerCell.contentView.backgroundColor = UIColor.whiteColor()
             return headerCell.contentView // Otherwise we get "No cell for indexPath" errors
         }
         return nil

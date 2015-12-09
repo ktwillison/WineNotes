@@ -62,7 +62,9 @@ class PeerConnectionManager: NSObject, MCSessionDelegate {
     
     // Send the given rating to all connected peers
     func broadcastRating(rating : Review) {
-        sendRatingToPeers(rating, peers: session.connectedPeers)
+        if session.connectedPeers.count > 0 {
+            sendRatingToPeers(rating, peers: session.connectedPeers)
+        }
     }
     
     // Send recent ratings to a newly connected peer
