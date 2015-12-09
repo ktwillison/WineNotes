@@ -9,6 +9,7 @@
 import Foundation
 import CoreData
 import UIKit
+import CoreLocation
 
 class WineReview: NSManagedObject {
     
@@ -26,7 +27,12 @@ class WineReview: NSManagedObject {
             wineReview.imageURL =  review.imageURL
             let unique = String(NSDate.timeIntervalSinceReferenceDate()) + "_" + UIDevice.currentDevice().identifierForVendor!.UUIDString
             wineReview.id = unique
-
+            
+            if review.location != nil {
+                let location : Dictionary<String, Double> = ["latitude" : review.location!.latitude, "longitude" : review.location!.longitude]
+                wineReview.location = NSKeyedArchiver.archivedDataWithRootObject(location)
+            }
+        
             let notification = NSNotification(name: "ReviewAddedToDatabase", object: self, userInfo: nil)
             NSNotificationCenter.defaultCenter().postNotification(notification)
             
@@ -80,5 +86,14 @@ class WineReview: NSManagedObject {
             }
         }
         return nil        
+    }
+    
+    func getCoordinate() -> CLLocationCoordinate2D? {
+        if location != nil {
+            if let locationDict = NSKeyedUnarchiver.unarchiveObjectWithData(location!) as? Dictionary<String, Double> {
+                return CLLocationCoordinate2D(latitude: locationDict["latitude"]!, longitude: locationDict["longitude"]!)
+            }
+        }
+        return nil
     }
 }

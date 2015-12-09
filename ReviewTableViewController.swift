@@ -40,9 +40,14 @@ class ReviewTableViewController: UITableViewController, UIPopoverPresentationCon
         coreImageFilter = CIFilter(name: "CIPhotoEffectChrome")
         
         // Set up core location manager
-        
-        
-        
+        coreLocationManager.delegate = self
+        coreLocationManager.desiredAccuracy = kCLLocationAccuracyBest
+        if CLLocationManager.authorizationStatus() == .NotDetermined {
+            coreLocationManager.requestWhenInUseAuthorization()
+            if CLLocationManager.authorizationStatus() == .AuthorizedWhenInUse {
+                coreLocationManager.requestLocation()
+            }
+        }
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -301,11 +306,22 @@ class ReviewTableViewController: UITableViewController, UIPopoverPresentationCon
         }
     }
     
+    //MARK: - Core location
+    
+    // Delegate methods that I don't need, but apparently it likes to crash if I don't have them.
+    func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]){}
+    func locationManager(manager: CLLocationManager, didFailWithError error: NSError) {}
     
     //MARK: - Core Data
     
     // Update review object and store it in the database
     @IBAction func submitReview(sender: UIBarButtonItem) {
+        
+        //Get current location
+        if(CLLocationManager.authorizationStatus() == .AuthorizedWhenInUse) {
+            coreLocationManager.requestLocation()
+            review.location = coreLocationManager.location?.coordinate
+        }
         
         // Add a copy of this review object so that we avoid race conditions
         review.updateFromCellDictionary(cellDictionary: cellDictionary)

@@ -9,6 +9,7 @@
 import UIKit
 import Foundation
 import CoreData
+import CoreLocation
 
 
 // Main intermediate data model for interfacing between the ReviewTableViewController and Core Data,
@@ -29,6 +30,7 @@ class Review : NSObject, NSCoding {
     var name : String?
     var image : UIImage?
     var imageURL : String?
+    var location : CLLocationCoordinate2D?
     
     // Translat the ReviewTableViewController's object into a Review object
     func updateFromCellDictionary(cellDictionary dict : Dictionary<String, RatingCell>) {
@@ -72,6 +74,7 @@ class Review : NSObject, NSCoding {
         image = review.getImage()
         id = review.id
         if review.rating != nil {rating = Double(review.rating!)}
+        location = review.getCoordinate()
         
         if review.eyes?.color != nil { eyes.color = NSKeyedUnarchiver.unarchiveObjectWithData((review.eyes?.color)!) as? UIColor}
         if review.eyes?.opacity != nil {eyes.opacity = Double(review.eyes!.opacity!)}
@@ -110,6 +113,9 @@ class Review : NSObject, NSCoding {
         varietal = decoder.decodeObjectForKey("varietal") as? String
         imageURL = decoder.decodeObjectForKey("imageURL") as? String
         image = decoder.decodeObjectForKey("image") as? UIImage
+        if let locationDict = decoder.decodeObjectForKey("location") as? Dictionary<String, Double> {
+            location = CLLocationCoordinate2D(latitude: locationDict["latitude"]!, longitude: locationDict["longitude"]!)
+        }
         
         eyes.opacity = decoder.decodeObjectForKey("eyes_opacity") as? Double
         eyes.rim = decoder.decodeObjectForKey("eyes_rim") as? Double
@@ -149,7 +155,11 @@ class Review : NSObject, NSCoding {
         if let varietal = varietal { coder.encodeObject(varietal, forKey: "varietal") }
         if let imageURL = imageURL { coder.encodeObject(imageURL, forKey: "imageURL") }
         if let image = image { coder.encodeObject(image, forKey: "image") }
-        
+        if location != nil {
+            let locationDict : Dictionary<String, Double> = ["latitude" : location!.latitude, "longitude" : location!.longitude]
+            coder.encodeObject(locationDict, forKey: "location")
+        }
+
         if let eyes_opacity = eyes.opacity { coder.encodeObject(eyes_opacity, forKey: "eyes_opacity") }
         if let eyes_rim = eyes.rim { coder.encodeObject(eyes_rim, forKey: "eyes_rim") }
         if let eyes_spritz = eyes.spritz { coder.encodeObject(eyes_spritz, forKey: "eyes_spritz") }
