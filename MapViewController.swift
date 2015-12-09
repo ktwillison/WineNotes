@@ -64,9 +64,17 @@ class MapViewController: UIViewController, MKMapViewDelegate {
     }
     
     func mapView(mapView: MKMapView, viewForAnnotation annotation: MKAnnotation) -> MKAnnotationView? {
-//        var view : MKAnnotationView! = mapView.dequeueReusableAnnotationViewWithIdentifier(IDENT)
         let view = MKPinAnnotationView(annotation: annotation, reuseIdentifier: "MKPinAnnotationView")
         view.canShowCallout = true
+        
+        if let review = annotation as? MappedWineReview {
+            if let image = review.image {
+                let imageView = UIImageView(frame: CGRectMake(0, 0, 59, 59))
+                imageView.image = image
+                view.leftCalloutAccessoryView = imageView
+            }
+        }
+        
         return view
     }
     
@@ -79,6 +87,7 @@ class MapViewController: UIViewController, MKMapViewDelegate {
         for review in reviews {
             if let parsedCoordinate = review.getCoordinate(){
                 let annotation = MappedWineReview(coordinate: parsedCoordinate, title: review.name, subtitle: review.varietal)
+                annotation.image = review.getImage()
                 reviewsAsAnnotations.append(annotation)
             }
         }
@@ -91,6 +100,7 @@ class MappedWineReview : NSObject, MKAnnotation {
     var coordinate : CLLocationCoordinate2D
     var title: String?
     var subtitle: String?
+    var image : UIImage?
     
     init(coordinate: CLLocationCoordinate2D, title: String?, subtitle : String?) {
         self.coordinate = coordinate
