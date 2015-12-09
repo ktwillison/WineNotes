@@ -20,7 +20,6 @@ class TagCollectionViewController: UICollectionViewController {
     }
 
     let center = NSNotificationCenter.defaultCenter()
-//    var layout : UICollectionViewFlowLayout?
     
     private var addObserver : AnyObject?
     private var removeObserver : AnyObject?
@@ -28,7 +27,7 @@ class TagCollectionViewController: UICollectionViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // prompt layout to autolayout
+        // prompt layout to autolayout ---- This makes things crash  ;(
 //        if let layout = collectionViewLayout as? UICollectionViewFlowLayout {
 //            layout.estimatedItemSize = CGSize(width: 100, height: 40)   // A few  magic numbers to init autolayout
 //        }
@@ -79,16 +78,6 @@ class TagCollectionViewController: UICollectionViewController {
         collectionView?.flashScrollIndicators()
     }
 
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        // Get the new view controller using [segue destinationViewController].
-        // Pass the selected object to the new view controller.
-    }
-    */
-
     // MARK: UICollectionViewDataSource
 
     override func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int {
@@ -109,25 +98,4 @@ class TagCollectionViewController: UICollectionViewController {
         }
         return UICollectionViewCell()
     }
-    
-//    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
-//        let cell = TagCollectionViewCell()
-//        cell.aroma = tags[indexPath.row]
-////        cell.label.sizeToFit()
-//        cell.systemLayoutSizeFittingSize(CGSize(width: 50, height: 30))
-//        return cell.frame.size
-//    }
-
-    // MARK: UICollectionViewDelegate
-
-    /*
-    override func collectionView(collectionView: UICollectionView, canPerformAction action: Selector, forItemAtIndexPath indexPath: NSIndexPath, withSender sender: AnyObject?) -> Bool {
-        return false
-    }
-
-    override func collectionView(collectionView: UICollectionView, performAction action: Selector, forItemAtIndexPath indexPath: NSIndexPath, withSender sender: AnyObject?) {
-    
-    }
-    */
-
 }

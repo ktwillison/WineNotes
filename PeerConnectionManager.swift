@@ -11,6 +11,8 @@
 import UIKit
 import MultipeerConnectivity
 
+
+//
 class PeerConnectionManager: NSObject, MCSessionDelegate {
     
     let serviceType = "WineNotes"
@@ -23,6 +25,8 @@ class PeerConnectionManager: NSObject, MCSessionDelegate {
     let center = NSNotificationCenter.defaultCenter()
     var addReviewObserver : AnyObject?
     
+    
+    // Data Model
     var receivedReviews : [Review] = [] {
         didSet {
             // Send a notification that the receivedReviews object has changed
@@ -112,7 +116,7 @@ class PeerConnectionManager: NSObject, MCSessionDelegate {
         }
     }
     
-    
+    // Update results with received data
     func updateResults(withData data : NSData, fromPeer peerID: MCPeerID) {
         
         if let loadedReview = NSKeyedUnarchiver.unarchiveObjectWithData(data) as? Review {
@@ -126,32 +130,22 @@ class PeerConnectionManager: NSObject, MCSessionDelegate {
         }
     }
     
+    // Handle a peer sending NSData to us
     func session(session: MCSession, didReceiveData data: NSData, fromPeer peerID: MCPeerID) {
-        // Called when a peer sends an NSData to us
-        
         // This needs to run on the main queue
         dispatch_async(dispatch_get_main_queue()) {
             self.updateResults(withData: data, fromPeer: peerID)
         }
     }
     
-    // The following methods do nothing, but the MCSessionDelegate protocol
-    // requires that we implement them.
-    func session(session: MCSession,
-        didStartReceivingResourceWithName resourceName: String,
-        fromPeer peerID: MCPeerID, withProgress progress: NSProgress)  {
-            // Called when a peer starts sending a file to us
-    }
+    // MCSessionDelegate protocol's required methods:
+
+    // Called when a peer starts sending a file to us
+    func session(session: MCSession, didStartReceivingResourceWithName resourceName: String, fromPeer peerID: MCPeerID, withProgress progress: NSProgress)  {}
     
-    func session(session: MCSession,
-        didFinishReceivingResourceWithName resourceName: String,
-        fromPeer peerID: MCPeerID,
-        atURL localURL: NSURL, withError error: NSError?)  {
-            // Called when a file has finished transferring from another peer
-    }
+    // Called when a file has finished transferring from another peer
+    func session(session: MCSession, didFinishReceivingResourceWithName resourceName: String, fromPeer peerID: MCPeerID, atURL localURL: NSURL, withError error: NSError?)  {}
     
-    func session(session: MCSession, didReceiveStream stream: NSInputStream,
-        withName streamName: String, fromPeer peerID: MCPeerID)  {
-            // Called when a peer establishes a stream with us
-    }
+    // Called when a peer establishes a stream with us
+    func session(session: MCSession, didReceiveStream stream: NSInputStream, withName streamName: String, fromPeer peerID: MCPeerID)  {}
 }

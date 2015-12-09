@@ -13,14 +13,6 @@ import UIKit
 class WineReview: NSManagedObject {
     
     class func wineReviewFromReview(review: Review, inManagedObjectContext context: NSManagedObjectContext) -> WineReview? {
-//        // See if tweet is already in database
-//        let request = NSFetchRequest(entityName: "Tweet")
-//        request.predicate = NSPredicate(format: "id = %@ AND search.text = %@", tweetInfo.id, searchText)
-//        if let tweet = (try? context.executeFetchRequest(request))?.first as? Tweet {
-//            return tweet
-//            
-//            // If not, create one, and add it to the database
-//        } else
         if let wineReview = NSEntityDescription.insertNewObjectForEntityForName("WineReview", inManagedObjectContext: context) as? WineReview {
             wineReview.date = NSDate()
             wineReview.rating = review.rating
@@ -43,14 +35,16 @@ class WineReview: NSManagedObject {
         return nil
     }
     
+    func removeFromDatabase(inManagedObjectContext context: NSManagedObjectContext) {
+        context.deleteObject(self)
+    }
+
     class func getReviews(inManagedObjectContext context: NSManagedObjectContext, limit : Int? = nil) -> [WineReview] {
         
         let request = NSFetchRequest(entityName: "WineReview")
         request.sortDescriptors = [NSSortDescriptor(key: "date", ascending: false)]
         
-        if limit != nil {
-            request.fetchLimit = limit!
-        }
+        if limit != nil { request.fetchLimit = limit!}
         
         if let results = (try? context.executeFetchRequest(request)) as? [WineReview] {
             return results

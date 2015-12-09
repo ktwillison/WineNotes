@@ -32,15 +32,4 @@ class InfoTextViewController: UIViewController {
 //        view.sizeToFit()    //= CGSize(width: 320, height: 186)
         preferredContentSize = view.systemLayoutSizeFittingSize(UILayoutFittingCompressedSize)
     }
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
 }

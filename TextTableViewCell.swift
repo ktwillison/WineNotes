@@ -13,7 +13,7 @@ class TextTableViewCell: UITableViewCell, UITextFieldDelegate {
     
     var connectedCell : RatingCell? {
         didSet {
-            nameTextField?.text = connectedCell?.textValue ?? ""
+            nameTextField?.text = connectedCell?.textValue
         }
     }
     var controllerDelegate : ReviewTableViewController!
@@ -22,7 +22,7 @@ class TextTableViewCell: UITableViewCell, UITextFieldDelegate {
     
     @IBOutlet weak var nameTextField: UITextField! {
         didSet {
-            nameTextField.delegate = self //controllerDelegate
+            nameTextField.delegate = self
             nameTextField.addTarget(self, action: "updateTextValue", forControlEvents: .EditingChanged)
         }
     }

@@ -14,7 +14,7 @@ class RatingHistoryTableViewCell: UITableViewCell {
     var associatedReview : WineReview? {
         didSet {
             if associatedReview != nil {
-                cellTitle.text = associatedReview!.name
+                cellTitle.text = associatedReview!.name ?? "Untitled Wine"
                 cellSubtitle.text = associatedReview!.varietal
                 cellImageView.image = associatedReview!.getImage()
             }

@@ -38,12 +38,13 @@ class PeerCollectionViewController: UICollectionViewController, UICollectionView
         }
     }
     
+    // Add observers to update view when a new review is received
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         
         // Add observer for "received review"
         receivedReviewObserver = center.addObserverForName("ReceivedReview",
-            object: nil, //UIApplication.sharedApplication(),
+            object: nil,
             queue: NSOperationQueue.mainQueue())
             { [weak weakSelf = self] notification in
                 weakSelf?.collectionView?.reloadData()
@@ -51,50 +52,36 @@ class PeerCollectionViewController: UICollectionViewController, UICollectionView
         collectionView?.reloadData()
     }
     
+    // Clean up observers
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
-        
         if receivedReviewObserver != nil {
             NSNotificationCenter.defaultCenter().removeObserver(receivedReviewObserver!)
             receivedReviewObserver = nil
         }
     }
     
-    // Somehow invalidateLayout only works if I implement it here?
+    // Somehow invalidateLayout only works if I implement it here? hmm.
     override func willRotateToInterfaceOrientation(toInterfaceOrientation: UIInterfaceOrientation, duration: NSTimeInterval) {
         collectionViewLayout.invalidateLayout()
     }
-
     
     // When selected, show the peer browser
     @IBAction func showPeerBrowser(sender: UIBarButtonItem) {
         self.presentViewController(browserVC, animated: true, completion: nil)
     }
     
+    // Browser view controller is dismissed (ie the Done button was tapped)
     func browserViewControllerDidFinish(
         browserViewController: MCBrowserViewController)  {
-            // Called when the browser view controller is dismissed (ie the Done
-            // button was tapped)
-            
             self.dismissViewControllerAnimated(true, completion: nil)
     }
     
+    // Browser view controller is cancelled
     func browserViewControllerWasCancelled(
         browserViewController: MCBrowserViewController)  {
-            // Called when the browser view controller is cancelled
-            
             self.dismissViewControllerAnimated(true, completion: nil)
     }
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        // Get the new view controller using [segue destinationViewController].
-        // Pass the selected object to the new view controller.
-    }
-    */
 
     // MARK: UICollectionViewDataSource
 
@@ -104,7 +91,6 @@ class PeerCollectionViewController: UICollectionViewController, UICollectionView
 
 
     override func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of items
         return receivedReviews.count
     }
 
@@ -124,71 +110,22 @@ class PeerCollectionViewController: UICollectionViewController, UICollectionView
             if cell.cellImage.image != nil {
                 let aspectRatio = cell.cellImage.image!.size.height / cell.cellImage.image!.size.width
                 let photoHeight = aspectRatio * photoWidth
-//                let photoOrigin = CGPoint(x: cell.layoutMarginsGuide.leftAnchor. , y: cellHeight - photoHeight)
                 let photoOrigin = CGPoint(x: 0 , y: cellHeight - photoHeight)
                 cell.cellImage.frame = CGRect(origin: photoOrigin, size: CGSize(width: photoWidth, height: photoHeight))
             }
         }
-    
         return cell
     }
 
     // MARK: UICollectionViewDelegate
 
-//    private let sectionInsets = UIEdgeInsets(top: 50.0, left: 20.0, bottom: 50.0, right: 20.0)
-    private var cellWidth : CGFloat {
-        get{ return 250 } //(collectionView?.frame.width ?? 230) * 0.7 }
-    }
-    
-    private var cellHeight : CGFloat {
-        get{ return (collectionView?.frame.height ?? 375) * 0.6 }
-    }
-    
-    private var photoWidth : CGFloat {
-        get { return cellWidth }
-    }
+    private var cellWidth : CGFloat { get{ return 250 }}
+    private var cellHeight : CGFloat { get{ return (collectionView?.frame.height ?? 375) * 0.6 }}
+    private var photoWidth : CGFloat { get { return cellWidth }}
     
     func collectionView(collectionView: UICollectionView,
         layout collectionViewLayout: UICollectionViewLayout,
         sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
             return CGSize(width: cellWidth, height: cellHeight)
     }
-    
-   
-//    func collectionView(collectionView: UICollectionView,
-//        layout collectionViewLayout: UICollectionViewLayout,
-//        insetForSectionAtIndex section: Int) -> UIEdgeInsets {
-//            return sectionInsets
-//    }
-
-    
-    /*
-    // Uncomment this method to specify if the specified item should be highlighted during tracking
-    override func collectionView(collectionView: UICollectionView, shouldHighlightItemAtIndexPath indexPath: NSIndexPath) -> Bool {
-        return true
-    }
-    */
-
-    /*
-    // Uncomment this method to specify if the specified item should be selected
-    override func collectionView(collectionView: UICollectionView, shouldSelectItemAtIndexPath indexPath: NSIndexPath) -> Bool {
-        return true
-    }
-    */
-
-    /*
-    // Uncomment these methods to specify if an action menu should be displayed for the specified item, and react to actions performed on the item
-    override func collectionView(collectionView: UICollectionView, shouldShowMenuForItemAtIndexPath indexPath: NSIndexPath) -> Bool {
-        return false
-    }
-
-    override func collectionView(collectionView: UICollectionView, canPerformAction action: Selector, forItemAtIndexPath indexPath: NSIndexPath, withSender sender: AnyObject?) -> Bool {
-        return false
-    }
-
-    override func collectionView(collectionView: UICollectionView, performAction action: Selector, forItemAtIndexPath indexPath: NSIndexPath, withSender sender: AnyObject?) {
-    
-    }
-    */
-
 }

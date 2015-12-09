@@ -57,9 +57,6 @@ class AromaView: UIView, UIDynamicAnimatorDelegate {
         thisItemBehavior.action = nil
         return thisItemBehavior
     }()
-
-    
-//    private var rotationSpeed : CGFloat = 0.0
     
     func rotateWheel(recognizer : UIPanGestureRecognizer) {
         if recognizer.state == .Changed{
@@ -88,7 +85,7 @@ class AromaView: UIView, UIDynamicAnimatorDelegate {
         }
     }
     
-    func positionWheel() {
+    private func positionWheel() {
         
         // Unwind current rotation properties
         let currentRotationSpeed = wheelBehavior.angularVelocityForItem(aromaWheelView)
@@ -112,7 +109,6 @@ class AromaView: UIView, UIDynamicAnimatorDelegate {
         if laidOutToBounds != self.bounds {
             positionWheel()
             laidOutToBounds = self.bounds
-//            layoutSubviews()
         }
     }
 }

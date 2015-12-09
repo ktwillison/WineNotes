@@ -28,6 +28,15 @@ struct AppData {
         }
     }
     
+    // Print DB stats
+    static func printDatabaseStatistics() {
+        managedObjectContext?.performBlock {
+            // the most efficient way to count objects
+            let reviewCount = managedObjectContext?.countForFetchRequest(NSFetchRequest(entityName: "WineReview"), error: nil)
+            print("\(reviewCount) Reviews")
+        }
+    }
+    
     static let varietals = ["Barbera",
         "Cabernet Franc",
         "Cabernet Sauvignon and Blends",
@@ -138,7 +147,6 @@ struct AppData {
     }
     
     static let descriptions : Dictionary<String, String> = [
-        "Openness" : "",
         "Body" : "You can feel the 'body' of a wine much like you feel the difference between whole and fat-free milk: the former would have a 'full body', while the latter would have a 'light body'."
     ]
     

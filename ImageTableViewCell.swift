@@ -11,7 +11,5 @@ import CoreImage
 
 
 class ImageTableViewCell: UITableViewCell {
-    
     @IBOutlet weak var pictureView: UIImageView!
-
 }

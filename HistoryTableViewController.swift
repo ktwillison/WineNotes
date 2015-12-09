@@ -17,16 +17,12 @@ class HistoryTableViewController: UITableViewController, UISearchResultsUpdating
     private var userIsSearching : Bool = false
     var searchController: UISearchController!
     
-    private var reviews : [WineReview]? {didSet { tableView.reloadData() }}
+    private var reviews : [WineReview]? {didSet { if !disableTableUpdate {tableView.reloadData() }}}
     private var filteredReviews : [WineReview]?
     private var dataSource : [WineReview]? {
         get {
-            if userIsSearching {
-                if searchController.searchBar.text == "" {return reviews}
-                return filteredReviews
-            } else {
-                return reviews
-            }
+            if searchController.searchBar.text == "" {return reviews}
+            return filteredReviews
         }
     }
     
@@ -41,7 +37,7 @@ class HistoryTableViewController: UITableViewController, UISearchResultsUpdating
             object: nil,
             queue: NSOperationQueue.mainQueue())
             { [weak weakSelf = self] notification in
-                weakSelf?.reviews = WineReview.getRecentReviews(withinHours: 6, context: AppData.managedObjectContext!)
+                weakSelf?.reviews = WineReview.getReviews(inManagedObjectContext: AppData.managedObjectContext!)
                 NSNotificationCenter.defaultCenter().removeObserver(weakSelf!.contextObserver!)
                 weakSelf?.contextObserver = nil
         }
@@ -51,14 +47,14 @@ class HistoryTableViewController: UITableViewController, UISearchResultsUpdating
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         if let context = AppData.managedObjectContext {
-            reviews = WineReview.getRecentReviews(withinHours: 6, context: context)
+            reviews = WineReview.getReviews(inManagedObjectContext: context)
         }
         
         databaseObserver = NSNotificationCenter.defaultCenter().addObserverForName("ReviewAddedToDatabase",
             object: nil,
             queue: NSOperationQueue.mainQueue())
             { [weak weakSelf = self] notification in
-                weakSelf?.reviews = WineReview.getRecentReviews(withinHours: 6, context: AppData.managedObjectContext!)
+                weakSelf?.reviews = WineReview.getReviews(inManagedObjectContext: AppData.managedObjectContext!)
                 weakSelf?.tableView.reloadData()
         }
     }
@@ -103,25 +99,20 @@ class HistoryTableViewController: UITableViewController, UISearchResultsUpdating
         searchController.searchBar.delegate = self
         searchController.searchBar.placeholder = "Search your past reviews"
         searchController.searchBar.sizeToFit()
+        searchController.dimsBackgroundDuringPresentation = false
         tableView.tableHeaderView = searchController.searchBar
         
     }
     
     func searchBarTextDidBeginEditing(searchBar: UISearchBar) {
-        userIsSearching = true
         tableView.reloadData()
     }
     
     func searchBarCancelButtonClicked(searchBar: UISearchBar) {
-        userIsSearching = false
         tableView.reloadData()
     }
     
     func searchBarSearchButtonClicked(searchBar: UISearchBar) {
-        if !userIsSearching {
-            userIsSearching = true
-            tableView.reloadData()
-        }
         searchController.searchBar.resignFirstResponder()
     }
     
@@ -155,6 +146,28 @@ class HistoryTableViewController: UITableViewController, UISearchResultsUpdating
         tableView.reloadData()
     }
 
+    //Add functionality to delete tableView rows
+    private var disableTableUpdate = false
+    override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
+        if editingStyle == UITableViewCellEditingStyle.Delete {
+            disableTableUpdate = true // Otherwise changing reviews calls reloadData() and crashes
+            
+            dataSource?[indexPath.row].removeFromDatabase(inManagedObjectContext: AppData.managedObjectContext!)
+            if let reviewIndex = reviews?.indexOf({$0.id == dataSource?[indexPath.row].id}) {
+                reviews?.removeAtIndex(reviewIndex)
+            }
+            if let filteredReviewIndex = filteredReviews?.indexOf({$0.id == dataSource?[indexPath.row].id}) {
+                filteredReviews?.removeAtIndex(filteredReviewIndex)
+            }
+            tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Automatic)
+            
+            disableTableUpdate = false
+            tableView.reloadData()
+            
+//            AppData.printDatabaseStatistics()
+        }
+    }
+    
     
     // MARK: - Social
     

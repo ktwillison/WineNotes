@@ -10,8 +10,12 @@ import UIKit
 import Foundation
 import CoreData
 
+
+// Main intermediate data model for interfacing between the ReviewTableViewController and Core Data,
+// as well as peer-to-peer connectivity through NSCoding encoding
 class Review : NSObject, NSCoding {
     
+    // Fields for each review dimension:
     var eyes = Eyes()
     var nose = Nose()
     var mouth = Mouth()
@@ -19,13 +23,14 @@ class Review : NSObject, NSCoding {
     var id : String?
     var date : NSDate?
     var rating : Double?
-    var varietal : String? // eventually change these to enums
+    var varietal : String? // will eventually change these to enums
     var country : String?
     var region : String?
     var name : String?
     var image : UIImage?
     var imageURL : String?
     
+    // Translat the ReviewTableViewController's object into a Review object
     func updateFromCellDictionary(cellDictionary dict : Dictionary<String, RatingCell>) {
         eyes.color = dict[ReviewKeys.Color]?.colorValue
         eyes.opacity = dict[ReviewKeys.Opacity]?.value
@@ -55,6 +60,7 @@ class Review : NSObject, NSCoding {
     
     override init() {super.init()}
     
+    // Translate a WineReview database object into a Review object
     init(fromWineReview review : WineReview){
         
         date = review.date
@@ -91,7 +97,7 @@ class Review : NSObject, NSCoding {
 
     }
     
-    
+    // Initialize a Review from NSCoded data
     required convenience init(coder decoder: NSCoder) {
         self.init()
         
@@ -132,6 +138,7 @@ class Review : NSObject, NSCoding {
         }
     }
     
+    // Encode the object via NSCoder
     func encodeWithCoder(coder: NSCoder) {
         if let id = id { coder.encodeObject(id, forKey: "id") }
         if let name = name { coder.encodeObject(name, forKey: "name") }
@@ -175,6 +182,7 @@ class Review : NSObject, NSCoding {
     }
 }
 
+// Structure for review dimensions
 struct Eyes {
     var color : UIColor?
     var opacity : Double?
